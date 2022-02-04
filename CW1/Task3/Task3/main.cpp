@@ -20,23 +20,21 @@ int main()
 
         //================Your code goes here=====================
 
+        // get the image output from match
+        Mat imageMatch;
+        matchTemplate(PCB, Component, imageMatch, TM_SQDIFF_NORMED);
 
+        // values and locations of matching sections
+        double maxValue, minValue;
+        Point maxLocation, minLocation;
+        minMaxLoc(imageMatch, &minValue, &maxValue, &minLocation, &maxLocation);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        // check if the matched pixels for components are below the minimum acceptable amount
+        if (minValue > 0.009) { cout << "\n Error... Component not found!" << endl; }
+        else {
+            Point componentRectange(minLocation.x + Component.cols, minLocation.y + Component.rows);
+            rectangle(PCB, minLocation, componentRectange, Scalar(0, 0, 255), 2);
+        }
 
         //display the results untill x is pressed
         while(waitKey(10)!='x'){
