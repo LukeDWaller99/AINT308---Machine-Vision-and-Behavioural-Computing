@@ -1,52 +1,79 @@
-\documentclass [11pt]{article}						
-\usepackage{fancyhdr}
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
-\usepackage{gensymb}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
+  \documentclass[conference]{IEEEtran}
+
 \usepackage{graphicx}
-\usepackage{textcomp}
-\usepackage{xcolor}
-\usepackage{siunitx}
-\usepackage{indentfirst}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage{caption}
+\usepackage{subfigure}
 \usepackage{float}
+\usepackage{indentfirst}
+\usepackage[compact]{titlesec}
+\titlespacing{\section}{0pt}{*0}{*0}
+\titlespacing{\subsection}{0pt}{*0}{*0}
+\titlespacing{\subsubsection}{0pt}{*0}{*0}
+\setlength{\parindent}{0pt}
+\newcommand{\forceindent}{\leavevmode{\parindent=1em\indent}}
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
 \usepackage{hyperref}
-\usepackage[UKenglish]{datetime}
-\usepackage{setspace}
-\usepackage{hhline}
 
 \hypersetup
 {
     colorlinks=true,
     linkcolor=black,   
     urlcolor=blue,
+    citecolor=black,
 }
 
-\pagestyle{fancyplain}
-\fancyhf{}
-\fancyhead[R]{Student No. 10618407}
-\fancyfoot[R]{\thepage}
 
-\doublespacing
+\begin{document}
+\title{AINT308 - OpenCV Assignment 1 2022}
 
-\begin{document}							
-\title{\bf AINT308 - OpenCV Assignment 1 2022} 	
-\author{Student No. 10618407} 								
-\date{\today} 										
-\maketitle 												
-\pagenumbering{roman}			
-\newpage			
-\setcounter{page}{2}								
-\tableofcontents 
-\newpage
+\author{\IEEEauthorblockN{Student No. 10618407}
+\IEEEauthorblockA{School of Engineering,\\Computing and Mathematics
+\\University of Plymouth\\
+Plymouth, Devon\\}}
+
+\maketitle
+
+\begin{abstract}
+This report documents the process of designing, developing, and building a quadrupedal robot that is capable of walking one meter unaided. This robot was designed in Fusion360, a Computer Aided Design (CAD) package. We started by creating two individual robots. Using iterative design and prototyping techniques we collated these into one final robot. We then simulated and tested the robot using Finite Element Analysis (FEA), and Motion Studies. Once these simulations were analysed and the necessary changes were made, the design was 3D printed using two main techniques. The first of these was Fused Deposition Modelling (FMD) printing. This was for the low tolerance parts. we also used Masked Stereolithography (mSLA) printing for the higher tolerance parts. An iterative development methodology was used to calculate the gait of the robot. The inspirations for this project were taken from nature and science fiction.  
+\end{abstract}
+
+\subsection*{Keywords:} 
+Quadrupedal, 3D Printed, Rapid Prototyping, Robotics, Finite Element Analysis, CAD, Arduino
 
 \section{Task 1: Colour Sorter}	
-\subsection{Introduction}
-\subsection{Solution}
-\subsection{Further Improvments}
 \pagenumbering{arabic}
+\subsection{Introduction}
+
+\subsection{Solution}
+\forceindent The figure below shows my solution to the first task, the Colour Sorter. 
+
+\subsection{Further Improvements}
+
+\subsection{Conclusion}
+
+\section{Task 2: Colour Tracker}
+
+\subsection{Introduction}
+
+\subsection{Solution}
+The figure below shows my solution to the second task, the Colour Tracker. 
+
+\subsection{Further Improvements}
+
+\subsection{Conclusion}
+
+\section{Task 3: Cross Correlation}
+
+\subsection{Introduction}
+
+\subsection{Solution}
+The figure below shows my solution to the third task, the Cross Correlation. 
+
+\subsection{Further Improvements}
+
+\subsection{Conclusion}
 
 The animation of the arm moving through the maze can be seen here: - \href{Link}{Linky}
 
