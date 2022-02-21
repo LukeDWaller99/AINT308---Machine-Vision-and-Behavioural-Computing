@@ -38,19 +38,64 @@ int main()
 
         //load next frame
 
+        Point point_1(592, 51), point_2(592, 650);
+        int thickness = 2;
+        int radiusOfCircle = 20;
+
+        line(Frame, // target frame
+             point_1, //starting point for line
+             point_2, //ending point for line
+             Scalar(0, 0, 255), // colour of line
+             thickness); //line thickness
+
         cvtColor(Frame, FrameHSV, COLOR_BGR2HSV);
-        Vec3b green_lower(30, 50, 70);
-        Vec3b green_upper(95, 255, 255);
-        inRange(FrameHSV, green_lower, green_upper, FrameFiltered);
-        Moments m = moments(FrameFiltered, true);
-        Point p(m.m10/m.m00, m.m01/m.m00);
-        circle(Frame, p, 20, Scalar(0,255,0), 3);
-        line(Frame, Pivot, p, Scalar(255,0,0), 2);
-        //double angle = atan2(p.y - Pivot.y, p.x - Pivot.x);
-        double angles = atan2(p.x, p.y )/ M_PI_4;
-        double degangles = angles * 180 / 3.14;
-        cout << "angles are:  " << degangles << endl;
-        DataFile << degangles << endl;
+        Vec3b greenLowerBound(30, 50, 70);
+        Vec3b greenUpperBound(95, 255, 255);
+
+        inRange(FrameHSV, greenLowerBound, greenUpperBound, FrameFiltered);
+        Moments moment = moments(FrameFiltered, true);
+
+        Point pendulumPoint(moment.m10/moment.m00, //
+                moment.m01/moment.m00); //
+
+        circle(Frame, // target frame
+               pendulumPoint, // center of circle
+               radiusOfCircle, //radius of circle
+               Scalar(0,255,0), // colour of circle
+               thickness * 1.5); //thickness of line
+        line(Frame, // target frame
+             Pivot, // starting point of line
+             pendulumPoint, // ending point for line
+             Scalar(255,0,0), //colour of line
+             thickness); //thickness of line
+
+        double angleInRadians = (atan2(pendulumPoint.x, pendulumPoint.y )/ M_PI_4) - M_PI_4;
+        char angleInRadiansOutput[30];
+        sprintf(angleInRadiansOutput, "Angle in radians: %f", angleInRadians);
+        putText(Frame, //target image
+                angleInRadiansOutput, // text to be outputted
+                Point(800, 30), // top-left position of text
+                FONT_HERSHEY_DUPLEX, // font
+                1.0, // size of text,
+                Scalar(0, 255, 0), // text colour
+                thickness);
+
+        double angleInDegrees = angleInRadians * 180 / CV_PI;
+        char angleInDegreesOutput[30];
+        sprintf(angleInDegreesOutput, "Angle in degrees: %f", angleInDegrees);
+
+        putText(Frame, //target image
+                angleInDegreesOutput, //text
+                Point(800, 60), // top-left position of text
+                FONT_HERSHEY_DUPLEX, // font
+                1.0, // size of text
+              Scalar(255, 0, 0), // text colour
+                thickness);
+
+
+        cout << "Pendulum angle:  " << angleInDegrees << endl;
+
+        DataFile << angleInDegrees << endl;
 
         //if frame is empty then the video has ended, so break the loop
         if(FrameFiltered.empty()){
@@ -63,8 +108,8 @@ int main()
         //==============================================================================================================================
 
         //display the frame
-        imshow("Video", Frame);
-        imshow("new video", FrameFiltered);
+        imshow("Video - 10618407", Frame);
+        imshow("New Video - 10618407", FrameFiltered);
         waitKey(10);
     }
 
