@@ -38,7 +38,7 @@ int main()
 
         //load next frame
 
-        Point point_1(592, 51), point_2(592, 650);
+        Point point_1(592, 52), point_2(592, 650);
         int thickness = 2;
         int radiusOfCircle = 20;
 
