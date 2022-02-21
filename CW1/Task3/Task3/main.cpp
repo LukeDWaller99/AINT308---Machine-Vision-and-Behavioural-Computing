@@ -22,7 +22,10 @@ int main()
 
         // get the image output from match
         Mat imageMatch;
-        matchTemplate(PCB, Component, imageMatch, TM_SQDIFF_NORMED);
+        matchTemplate(PCB,
+                      Component,
+                      imageMatch,
+                      TM_SQDIFF_NORMED);
 
         // values and locations of matching sections
         double maxValue, minValue;
@@ -30,7 +33,7 @@ int main()
         minMaxLoc(imageMatch, &minValue, &maxValue, &minLocation, &maxLocation);
 
         // check if the matched pixels for components are below the minimum acceptable amount
-        if (minValue > 0.009) { cout << "\n Error... Component not found!" << endl; }
+        if (minValue > 0.009) { printf("\n Error... Component %d not found!\n", n); }
         else {
             Point componentRectange(minLocation.x + Component.cols, minLocation.y + Component.rows);
             rectangle(PCB, minLocation, componentRectange, Scalar(0, 0, 255), 2);
@@ -38,8 +41,8 @@ int main()
 
         //display the results untill x is pressed
         while(waitKey(10)!='x'){
-            imshow("Target", Component);
-            imshow("PCB", PCB);
+            imshow("Target Component - 10618407", Component);
+            imshow("PCB - 10618407", PCB);
         }
 
     }
