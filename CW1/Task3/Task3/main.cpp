@@ -55,7 +55,7 @@ int main()
 
         cout << "\nPCB with Missing Components" << endl;
         // 2nd loop with no missing components
-        //loop through component images
+        // loop through component images
         for(int n=0; n<10; ++n){
 
             //read PCB and component images

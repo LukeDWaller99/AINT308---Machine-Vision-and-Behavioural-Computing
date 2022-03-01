@@ -1,4 +1,4 @@
-	\documentclass[conference]{IEEEtran}
+\documentclass[conference]{IEEEtran}
 
 \usepackage{graphicx}
 \usepackage{caption}
@@ -56,7 +56,7 @@ The task was to identify the colour of a given car. An example of the type of im
 \end{figure}
 
 \subsection{Solution}
-Fig \ref{fig:CW1_Task_1_code_colour_checker} below shows the solution to the first task, the Colour Sorter.
+Fig. \ref{fig:CW1_Task_1_code_colour_checker} shows the solution to the first task, the Colour Sorter.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.5\textwidth]{CW1_Task_1_code_colour_checker}}
@@ -156,7 +156,7 @@ The values saved into the CSV file, were then combined into a graph to show the 
 
 The full size graph of angle against time can be seen in Appendix \ref{appendix:angle_output_full_size}.
 
-It can be seen from the graph that the angle of the pendulums swing is not centered around $0$ degrees, there is an offset of about $12.5$ degrees. This is caused by the testing set up being slightly offset to the camera. This causes distortion in the results that can be seen as the offset. 
+It can be seen from the graph that the angle of the pendulums swing is not centred around $0$ degrees, there is an offset of about $12.5$ degrees. This is caused by the testing set up being slightly offset to the camera. This causes distortion in the results that can be seen as the offset. 
 
 The full code for task 2 is shown in Appendix \ref{appendix:task_2_full_code}.
 
@@ -180,8 +180,56 @@ In similar fashion to part one, this solution works well within the controlled e
 
 The third task is to use cross correlation to identify missing components on a PCB. Cross correlation is a method of mathematically measuring the similarity of two signals. It is used to measure how similar two samples are, on a sample by sample basis. \cite{ref:what_is_cross_corrilation} When using \textit{OpenCV}, the process of cross correlation is known as Template Matching. \cite{ref:open_cv_templae_matching}
 
+Template matching is considered to be one of the easiest forms of object detection that only requires a few lines of code to utilise. Alongside it's easy of use, it is computationally efficient and requires no thresholds to operate. \cite{ref:open_cv_templae_matching}
+
+The template matching in this task was used for identifying missing components on a Raspberry Pi 3B board. There was a list of ten components to check, shown in Appendix \ref{appendix:template_matching_components}. These ranged from the main Central Processing Unit (CPU) on the board down to small Surface Mounted Technology (SMT) capacitors. 
+
 \subsection{Solution}
-\forceindent The figure below shows my solution to the third task, the Cross Correlation. 
+Fig. \ref{fig:CW1_Task_3_template_matching_w_missing_components} shows the solution to the third task, Cross Correlation.
+
+\begin{figure}
+\centerline{\includegraphics[width=.5\textwidth]{CW1_Task_3_template_matching_w_missing_components}}
+\caption{Template Matching Code With No Components Missing}
+\label{fig:CW1_Task_3_template_matching_w_missing_components}
+\end{figure}
+
+The code iterates through a loop to perform template matching on all of the components. The algorithm looks at the first component in the list \textit{Component0}, and does template matching on the whole image to check whether the component is in the image or not. This is done by by checking the first template image (Fig. \ref{fig:Component0}), and trying to match it with something in the source image (Fig. \ref{fig:PCB}). At each point, the match is calculated using the equation in Fig. \ref{fig:template_matching_ccoef_normed}. This then gives a metric of how \textit{'good'} or \textit{'bad'} the match is. For each location, a computed result is stored in a resultant matrix. 'Bright' locations on the resultant matrix indicate the best mactches and darker areas indicate very little correlation. \cite{ref:open_cv_templae_matching}
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=.1\textwidth]{Component0}}
+\caption{Template Component 0}
+\label{fig:Component0}
+\end{figure}
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=.5\textwidth]{PCB}}
+\caption{Source Image }
+\label{fig:PCB}
+\end{figure}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{template_matching_ccoef_normed}}
+\caption{Template Matching equation for a normalised correlation coefficient}
+\label{fig:template_matching_ccoef_normed}
+\end{figure}
+
+When this code was run on the image, all of the components except \textit{Component 8} were found. This is the expected output for the PCB as this was the only component missing. This can be seen in Fig. \ref{fig:Missing_component_and_empty_place_on_PCB}.
+
+If a component is found on the board it is outlined with a blue rectangle and the corresponding component number it outputted onto the terminal. When the code was run over multiple iterations, it reliably managed to identify that \textit{Component 8} was missing. 
+
+In order to do a comprehensive test of the software, a picture of the board with the missing component added back on was used a test. Under these conditions, \textit{Component 8} was reliably and repeatably found in the correct location. This result shows that the template matching algorithm was in fact working on all the components and was not missing any on its run through. 
+
+\begin{figure}
+\centering
+\subfigure[Missing Component Space on PCB]{
+\includegraphics[width=.225\textwidth]{PCB_component_8}
+}
+\subfigure[Missing Component]{
+\includegraphics[width=.125\textwidth]{Component8}
+}
+\caption{Missing Component and Empty place on PCB}
+\label{fig:Missing_component_and_empty_place_on_PCB}
+\end{figure}
 
 \subsection{Further Improvements}
 
@@ -221,7 +269,7 @@ The code can be found on GitHub \href{https://github.com/LukeDWaller99/Aint308}{
 \subsection{Full Size Graph of Pendulum Angle Against Time}
 
 \begin{figure}[H]
-\centerline{\includegraphics[width=1.35\textwidth, angle = 90]{angle_output}}
+\centerline{\includegraphics[width=1.2 \textwidth, angle = 90]{angle_output}}
 \end{figure}
 
 \label{appendix:angle_output_full_size}
@@ -229,10 +277,48 @@ The code can be found on GitHub \href{https://github.com/LukeDWaller99/Aint308}{
 \subsection{Full Code - Task 2 }
 
 \begin{figure}[H]
-\centerline{\includegraphics[width=.7\textwidth]{CW1_Task_2_full_code}}
+\centerline{\includegraphics[width=.6\textwidth]{CW1_Task_2_full_code}}
 \end{figure}
 
 \label{appendix:task_2_full_code}
+
+\subsection{Template Matching Components}
+
+\begin{figure}[H]
+\centering
+\subfigure[Component 0]{
+\includegraphics[width=.2\textwidth]{Component0}
+}
+\subfigure[Component 1]{
+\includegraphics[width=.2\textwidth]{Component1}
+}
+\subfigure[Component 2]{
+\includegraphics[width=.2\textwidth]{Component2}
+}
+\subfigure[Component 3]{
+\includegraphics[width=.2\textwidth]{Component3}
+}
+\subfigure[Component 4]{
+\includegraphics[width=.2\textwidth]{Component4}
+}
+\subfigure[Component 5]{
+\includegraphics[width=.2\textwidth]{Component5}
+}
+\subfigure[Component 6]{
+\includegraphics[width=.2\textwidth]{Component6}
+}
+\subfigure[Component 7]{
+\includegraphics[width=.2\textwidth]{Component7}
+}
+\subfigure[Component 8]{
+\includegraphics[width=.2\textwidth]{Component8}
+}
+\subfigure[Component 9]{
+\includegraphics[width=.1\textwidth]{Component9}
+}
+\end{figure}
+
+\label{appendix:template_matching_components}
 
 
 \end{appendix}
