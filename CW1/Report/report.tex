@@ -80,6 +80,8 @@ To test the algorithm further, a large dataset of pictures of cars was used. 40 
 Overall this method worked for the dataset that was provided, but not well for the added dataset. 
 This dataset was selected so that the car made up a majority of the frame and the background were, for the most part plain and didn't sway the results.
 
+A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}
+
 
 \subsection{Further Improvements}
 Although this task worked for the given dataset, there are some ways to improve the accuracy. RGB models are typically not used for this type of task, with the Hue, Saturation, and Value (HSV) model being preferred. Initially the RGB model was built and optimised to be used on display screens, whereas the HSV model was developed to mimic how a human interprets colours. Since HSV models are able to separate colour vales and lightness, operations can be more easily performed on the hue itself. Because we are more interested in the colour of the cars and not the lightness, a HSV colour model would be a objectively better solution. \cite{ref:HSV_vs_RGB}
@@ -162,6 +164,8 @@ The full code for task 2 is shown in Appendix \ref{appendix:task_2_full_code}.
 
 Whilst the code is simplistic it does manage to track the pendulum well and doesn't struggle to identify the end of the pendulum in the frame. Despite this, there was nothing else green within the frame, this may have caused issues if this were to be the case. 
 
+A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}
+
 \subsection{Further Improvements}
 
 As suggested in the previous section, the improvements for this task revolve mainly around reducing the chance of another object of similar colour in the frame being detected. This could be done in many ways. The most simple way of doing this would be to reduce the chance of targeted body to be a unique shape to everything else in the image. Although \textit{OpenCV} does provide framework for recognising objects in multiple rotations \cite{ref:object_orientation}, it was be computationally less intense if the shape have multiple lines of symmetry. Another possibility for increasing the speed of image recognition is to train a neural network to detect rotated objects. \cite{9578190} 
@@ -229,11 +233,25 @@ In order to do a comprehensive test of the software, a picture of the board with
 }
 \caption{Missing Component and Empty place on PCB}
 \label{fig:Missing_component_and_empty_place_on_PCB}
-\end{figure}
+\end{figure} 
+
+A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}
 
 \subsection{Further Improvements}
 
+Despite the Template Matching algorithm working, it is not robust. It will not work if there are differing orientations or scales. Fixing the scaling issues is relatively simple and can be done using template matching. To do multi-scaled template matching is simple. The template image is re-scaled and the template matching algorithm is run again. \cite{ref:open_cv_templae_matching_scaling} This approach is simplistic and can save a lot of effort in writing and a lot of additional code and dealing with more fancy methods of template matching. 
+
+Template matching is not a good solution if the template and source image are in different orientations. Instead another methods can be used such as Canny Edge Detection or Keypoint Detection. 
+
+Canny Edge detection is one of the most popular edge detection algorithm developed by John F. Canny. It is a multi-stage process. It starts by utilising a Gaussian filter \cite{ref:Gaussian_filters} to reduce edge noise in the image. After this, the intensity gradient of the image is found using a Sobel kernel \cite{ref:sobel_kernal}. This then gets the first derivaive in both the x ($G_x$) and y ($G_y$) directions. The Edge Gradient is then calculated from this.  After this, Non-maximum suppression \cite{ref:non-maximum_supression} is used to remove any unwanted pixels that may not have made up the edge of the object. The final step is Hysteresis Thresholding \cite{ref:hysteresis_thresholding}. This stage is done to determine which edges are actually edges and which are not. 
+
+Keypoint detection is used often to mark out the human body. It utilises a heatmap representation of each keypoint i.e. shoulders, hips, hands etc. \cite{ref:keypoint_detection} This type technique is often paired with a neural network to make the detection faster and more accurate. This kind of Keypoint Detection is very powerful and has many uses such as gesture recognition, sign languages understanding, and activity recognition along with many more. \cite{ref:keypoint_detection_using_deep_learning} Given the scope of this task, keypoint detection using a deep learning network would be deemed to be an over-engineered solution.
+
 \subsection{Conclusion}
+
+As per the two other examples, template matching worked well enough for the criteria provided. Despite this, template matching is rather limited and if anything more complex than a difference in scaling, this approach would prove to be ineffective. A more robust and comprehensive solution would be required in the real world.
+
+A combination of the three previous example of cross correlation could provide a lightweight initial set of tests backed up by a more computationally intensive but more robust solution. This could be used to evaluate 
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
