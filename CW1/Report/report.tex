@@ -36,18 +36,16 @@ Plymouth, Devon\\}}
 
 \begin{abstract}
 
-Machine learning is not a new technology, it is a field that is becoming more prevalent within modern engineering practises. It is being used more in the rapidly evolving fields of autonomy and automation. This report outlines some of the functionality of a popular C based computer visions library \href{https://opencv.org}{OpenCV}. Task 1 is to evaluate the colors of pixels in a picture to determine the colour of a given object in the frame (car). Task 2 
-was to track on object across frames of a video to track its motion (swinging pendulum). Task 3 was to identify and cross correlate components on a circuit to check for any missing components.
+Machine vision is a mature technology that is becoming more prevalent within modern engineering practises. It is being utilised more in the rapidly evolving fields of autonomy and automation. This report outlines some of the functionality of a popular C/C++ based computer visions library \href{https://opencv.org}{\textit{OpenCV}}. The Assignment has been split into three tasks; Task 1, Task 2, and Task 3. The first task, Task 1, is to evaluate the colors of pixels in a picture to determine the colour of a given object in the frame (car). The second task, Task 2, was to track on object across multiple frames of a video to track its motion (swinging pendulum). The final task, Task 3, was to identify and cross correlate components on a circuit to check for any missing components.
 
 \end{abstract}
 
 \subsection*{Keywords:} 
-Computer Vision, OpenCV, Object Detection, RGB\\
+Computer Vision, OpenCV, Object Detection, C++, Object Tracking
 
 \section{Task 1: Colour Sorter}	
 \subsection{Introduction}
-The first task was to evaluate the colour of a given object in a given frame color within the RGB colour space. 
-The task was to identify the colour of a given car. An example of the type of image can be seen in Fig. \ref{fig:example_car}.
+The first task was to evaluate the colour of a given object within a frame color within the RGB colour space. For this task, the colour of the car within a frame is being evaluated. An example of the type of image can be seen in Fig. \ref{fig:example_car}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{example_car}}
@@ -64,8 +62,7 @@ Fig. \ref{fig:CW1_Task_1_code_colour_checker} shows the solution to the first ta
 \label{fig:CW1_Task_1_code_colour_checker}
 \end{figure}
 
-The code iterates through two loops, one to look at all the rows and the second to go through all the columns in a given row. 
-The value of each pixel is the evaluated, if the R(red), G(green), or B(blue) value if more than $1.5$ times larger than the other R, G, B values, then the pixel is deemed to be that colour. 
+\textbf{OpenVC} includes a built in method for retrieving the values of a pixel in an image.The code iterates through two loops, one to look at all the rows and the second to go through all the colum if the R(red), G(green), or B(blue) value if more than $1.5$ times larger than the other R, G, B values, then the pixel is deemed to be that colour. 
 The colour of this pixel is added to a running total for each of the colours. 
 
 After the whole image is checked the values are checked and the highest value is deemed to be the colour of the car. This can be seen in Fig. \ref{fig:CW1_Task_1_code_colour_checker_output}.
@@ -75,6 +72,7 @@ After the whole image is checked the values are checked and the highest value is
 \caption{Task 1 Code - Output}
 \label{fig:CW1_Task_1_code_colour_checker_output}
 \end{figure}
+
 To test the algorithm further, a large dataset of pictures of cars was used. 40 more images of cars was added to the dataset, alongside the original 30 that was provided. The new dataset was initially used to train and test machine learning models. \cite{ref:KrauseStarkDengFei-Fei_3DRR2013} These were added to test how to functionality of the task held up without highly cropped and optimised inputs.
 
 Overall this method worked for the dataset that was provided, but not well for the added dataset. 
@@ -191,7 +189,7 @@ The template matching in this task was used for identifying missing components o
 \subsection{Solution}
 Fig. \ref{fig:CW1_Task_3_template_matching_w_missing_components} shows the solution to the third task, Cross Correlation.
 
-\begin{figure}
+\begin{figure}[h]
 \centerline{\includegraphics[width=.5\textwidth]{CW1_Task_3_template_matching_w_missing_components}}
 \caption{Template Matching Code With No Components Missing}
 \label{fig:CW1_Task_3_template_matching_w_missing_components}
