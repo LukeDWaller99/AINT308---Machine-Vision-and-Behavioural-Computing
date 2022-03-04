@@ -47,7 +47,7 @@ Computer Vision, OpenCV, Object Detection, C++, Object Tracking
 \subsection{Introduction}
 The first task was to evaluate the colour of a given object within a frame color within the RGB colour space. For this task, the colour of the car within a frame is being evaluated. An example of the type of image can be seen in Fig. \ref{fig:example_car}.
 
-\begin{figure}[H]
+\begin{figure}
 \centerline{\includegraphics[width=.4\textwidth]{example_car}}
 \caption{Example Car Image}
 \label{fig:example_car}
@@ -56,37 +56,42 @@ The first task was to evaluate the colour of a given object within a frame color
 \subsection{Solution}
 Fig. \ref{fig:CW1_Task_1_code_colour_checker} shows the solution to the first task, the Colour Sorter.
 
-\begin{figure}[H]
+\begin{figure}
 \centerline{\includegraphics[width=.5\textwidth]{CW1_Task_1_code_colour_checker}}
 \caption{Task 1 Code - Colour Checking}
 \label{fig:CW1_Task_1_code_colour_checker}
 \end{figure}
 
-\textbf{OpenVC} includes a built in method for retrieving the values of a pixel in an image.The code iterates through two loops, one to look at all the rows and the second to go through all the colum if the R(red), G(green), or B(blue) value if more than $1.5$ times larger than the other R, G, B values, then the pixel is deemed to be that colour. 
-The colour of this pixel is added to a running total for each of the colours. 
+\textbf{OpenVC} includes a built in method for retrieving the values of a pixel in an image. The code begins by iterating through two loops, one to look at all the rows and the second to go through all the columns. If one of the R(red), G(green), or B(blue) value is more than $1.5$ times larger than the others the pixel is deemed to be that colour. This is done to help distinguish between the vibrant colour of the car and what could be considered the background in the image. Once this pixel has been checked, if the colour is within the given threshold, it is added to a running total for each of the colours.
 
-After the whole image is checked the values are checked and the highest value is deemed to be the colour of the car. This can be seen in Fig. \ref{fig:CW1_Task_1_code_colour_checker_output}.
+The value of $1.5$ was chosen because it was deemed to be a significant enough proportion larger that it was definitive in selecting the colour. If the value was too high, none of the colours would ever have been selected. If the value was too low, it would potentially get confused between the RBG values, especially for colours with a similar spread.
 
-\begin{figure}[H]
+After the whole image is checked, the counts are totalled and the highest value is deemed to be the colour of the car. This can be seen in Fig. \ref{fig:CW1_Task_1_code_colour_checker_output}.
+
+\begin{figure}
 \centerline{\includegraphics[width=.5\textwidth]{CW1_Task_1_code_colour_checker_output}}
 \caption{Task 1 Code - Output}
 \label{fig:CW1_Task_1_code_colour_checker_output}
 \end{figure}
 
-To test the algorithm further, a large dataset of pictures of cars was used. 40 more images of cars was added to the dataset, alongside the original 30 that was provided. The new dataset was initially used to train and test machine learning models. \cite{ref:KrauseStarkDengFei-Fei_3DRR2013} These were added to test how to functionality of the task held up without highly cropped and optimised inputs.
+To test the algorithm further, a larger dataset of pictures of cars was used. 40 more images of cars were added to the dataset, alongside the original 30 that was provided. The new dataset was initially used to train and test machine learning models. \cite{ref:KrauseStarkDengFei-Fei_3DRR2013} These were added to test how to algorithms functionality was maintained up without the use of highly cropped and optimised inputs.
 
-Overall this method worked for the dataset that was provided, but not well for the added dataset. 
-This dataset was selected so that the car made up a majority of the frame and the background were, for the most part plain and didn't sway the results.
+Overall this method worked for the dataset that was provided, but not as well for the added dataset. 
 
-A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}
+INCLUDE VALUES OF FINDINGS?
+
+
+The original dataset was selected such that the car made up a majority of the frame and the background was, for the most part plain as to not sway the results.
+
+\textit{A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}}
 
 
 \subsection{Further Improvements}
-Although this task worked for the given dataset, there are some ways to improve the accuracy. RGB models are typically not used for this type of task, with the Hue, Saturation, and Value (HSV) model being preferred. Initially the RGB model was built and optimised to be used on display screens, whereas the HSV model was developed to mimic how a human interprets colours. Since HSV models are able to separate colour vales and lightness, operations can be more easily performed on the hue itself. Because we are more interested in the colour of the cars and not the lightness, a HSV colour model would be a objectively better solution. \cite{ref:HSV_vs_RGB}
+Although this task worked for the given dataset, there are ways to improve the colour detection accuracy. RGB models are typically not used for this type of task, with the Hue, Saturation, and Value (HSV) model being preferred. Initially the RGB model was built and optimised to be used on display screens, whereas the HSV model was developed to mimic how a human interpret colours. Since HSV models are able to separate colour vales, saturation, and lightness, operations can be more easily performed on the hue itself. Because we are more interested in the colour of the cars and not the lightness, a HSV colour model would be an objectively better solution. \cite{ref:HSV_vs_RGB}
 
-Another improvement is to make the algorithm detect the outline of the car. This would eliminate the issues caused by having a background that could be mistaken for the body of the car. An example of this can be seen in Fig \ref{fig:red_car_green_background}. Open CV is capable of detecting cars in images and videos, albeit trivially. Although trivial, it could be used to drawe a box around the car thus eliminating a lot of the background surrounding the car. \cite{ref:Vehicle_detection_in_python} 
+Another improvement is to make the algorithm detect the outline of the car. This would eliminate the issues caused by having a background that could be mistaken for the body of the car. An example of this can be seen in Fig \ref{fig:red_car_green_background}. Open CV is capable of detecting cars in images and videos, albeit trivially. Although trivial, it could be used to draw a box around the car thus eliminating the background surrounding the car. \cite{ref:Vehicle_detection_in_python} 
 
-\begin{figure}[H]
+\begin{figure}
 \centerline{\includegraphics[width=.5\textwidth]{red_car_green_background}}
 \caption{Example Car with undesirable background}
 \label{fig:red_car_green_background}
@@ -94,11 +99,13 @@ Another improvement is to make the algorithm detect the outline of the car. This
 
 The red car with a green background may confuse the simple sorting algorithm and lead to a false result (the algorithm may think the car is green). This is the issue with using such a basic classification algorithm.
 
-The final improvement that could be partially solved by using the HSV colour model, but that would also require a far more complex solving algorithm \cite{ref:colour_sorting}, is that cars are not just red, green, or blue. They come in many different colours (including white, black, and silver) and also in many different shades and brightness of colour. By isolating just the RGB values and evaluating which is highest, a lot of granularity is lost. Using this method it is impossible to detect the shade of the car and even the type of red, green, or blue the car may be, if it is one of these colours at all. Using the blend of colours and evaluating them against known RGB values, further colours of car could have been identified with a significantly higher range of colours being available (Up to 16M different combinations for an 8-bit RGB value). This method however would require some form of 'lookup table' that would be used to compare the RGB pixel value to. This adds complexity to the task, but allowed for a better overall result.
+The final improvement that could be partially solved by using the HSV colour model, but that would also require a far more complex solving algorithm \cite{ref:colour_sorting}, is that cars are not just red, green, or blue. They come in many different colours (including white, black, and silver) and also in many different shades and brightness of colour. By isolating just the RGB values and evaluating which is highest, a lot of granularity is lost. Using this method it is impossible to detect the shade of the car and even the type of red, green, or blue the car may be, if it is one of these colours at all. Using the blend of colours and evaluating them against known RGB values, further colours of car could have been identified with a significantly higher range of colours being available (Up to 16M different combinations for an 8-bit RGB value). This method however would require some form of 'lookup table' that would be used to compare the RGB pixel value to. This adds complexity to the task, but would allow for a better overall result.
 
 \subsection{Conclusion}
 
-Overall this task was successful for the limited dataset that was provided. This dataset only included Red, Green, and Blue cars. These cars were placed in centre of the frame with neutral lighting. Due to the limited natured of both the colour space sued and the approach, anything more substantial than minor performance increased would require a overhaul of the methodology used. Changing from the \textit{RGB} to the \textit{HSV} colour space would increase the accuracy of the colour detection and would allow the solution to be expanded to a fuller range of car colours. Finally, outlining the car and omitting the background would reduce the likelihood of the background of the image influencing the detected colour of the car.
+Overall this task was successful for the limited dataset provided. This dataset only included Red, Green, and Blue cars. These cars were placed in centre of the frame with neutral lighting. Due to the limited nature of both the colour space used and the approach, anything more substantial than minor performance increase would require an overhaul of the methodology used. Changing from the \textit{RGB} to the \textit{HSV} colour space would increase the accuracy of the colour detection and would allow the solution to be expanded to a fuller range of car colours. 
+
+Finally, outlining the car and omitting the background would reduce the likelihood of the background of the image influencing the detected colour of the car.
 
 \section{Task 2: Colour Tracker}
 
@@ -162,7 +169,7 @@ The full code for task 2 is shown in Appendix \ref{appendix:task_2_full_code}.
 
 Whilst the code is simplistic it does manage to track the pendulum well and doesn't struggle to identify the end of the pendulum in the frame. Despite this, there was nothing else green within the frame, this may have caused issues if this were to be the case. 
 
-A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}
+\textit{A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}}
 
 \subsection{Further Improvements}
 
@@ -249,7 +256,10 @@ Keypoint detection is used often to mark out the human body. It utilises a heatm
 
 As per the two other examples, template matching worked well enough for the criteria provided. Despite this, template matching is rather limited and if anything more complex than a difference in scaling, this approach would prove to be ineffective. A more robust and comprehensive solution would be required in the real world.
 
-A combination of the three previous example of cross correlation could provide a lightweight initial set of tests backed up by a more computationally intensive but more robust solution. This could be used to evaluate 
+A combination of the three previous example of cross correlation could provide a lightweight initial set of tests backed up by a more computationally intensive but more robust solution. This could be used to evaluate more complex matching tasks, initially running the more lightweight, but less powerful algorithms before moving towards heavyweight but more thorough methods afterwards. 
+
+\textit{A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}}
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
