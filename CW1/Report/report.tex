@@ -111,10 +111,10 @@ Finally, outlining the car and omitting the background would reduce the likeliho
 
 \subsection{Introduction}
 
-The task was a colour tracker, that was set to track a specific colour in the frame. This colour was attached to the end of a pendulum. The results were recorded and the relative angle of the pendulum was recorded. This angle was recorded in both radians and degrees. 
+The second task was a colour tracker. It was set to track a specific colour within the frame. This colour was attached to the end of a pendulum. The results were recorded and the relative angle of the pendulum was recorded. This angle was recorded in both radians and degrees. 
 
 \subsection{Solution}
-Figure \ref{fig:CW1_Task_2_code_locating_rectange} is the code used to locate the colour in the image. 
+Fig. \ref{fig:CW1_Task_2_code_locating_rectange} is the code used to locate the colour in the image. 
 
 \begin{figure}
 \centerline{\includegraphics[width=.5\textwidth]{CW1_Task_2_code_locating_rectange}}
@@ -122,9 +122,27 @@ Figure \ref{fig:CW1_Task_2_code_locating_rectange} is the code used to locate th
 \label{fig:CW1_Task_2_code_locating_rectange}
 \end{figure}
 
-The colour in the frame was first converted from the RGB colour space to the HSV colour space, a still of this can be seen in Appendix \ref{appendix:pendulum_rgb_hsv_space}. The justification for this has been outlined above, it makes colours easier to identify in images \cite{ref:HSV_vs_RGB}. After identifying all of the correctly coloured pixels in the frame, a rectangle was drawm and a point was identified in the middle of this rectangle. The isolated rectangle can be seen in Appendix \ref{appendix:isolated_rectangle}.
+The colour in the frame was first converted from the RGB colour space to the HSV colour space, a still of this can be seen in Appendix \ref{appendix:pendulum_rgb_hsv_space}. The justification for this has been outlined above, it makes colours easier to identify in images \cite{ref:HSV_vs_RGB}. After identifying all of the correctly coloured pixels in the frame, a rectangle was drawn and a point was identified in the middle of this rectangle. 
+The values selected for the upper and lower bounds of these colours can be seen in Table. \ref{table:upper_and_lower_bounds} The hue value was chosen such that any inconsistencies in the colour of the rectangle would not result in it being unmarked. The brightness and Saturation values go from almost 0 to their maximum value 255. This was to allow changes in brightness of the image due to shadows or lighting changes.  These values allowed the rectangle to be detected without any objects being highlighted too. The isolated rectangle can be seen in Appendix \ref{appendix:isolated_rectangle}.
 
-After the centre point of the rectangle has been identified, the angle of the pendulum to its centre point was calculated. This was done using basic trigonometric identities using the x and y coordinates of the point. This calculation is show for radians in Fig \ref{fig:CW1_Task_2_code_locating_angle_calculation_radians}. 
+\begin{table}
+\begin{center}
+\caption{Upper and Lower Bounds for Hue, Saturation, and Brightness for Colour Tracking}
+\begin{tabular}{ || c || c | c | c || }
+\hline
+ Bound & Hue & Saturation & Brightness \\ 
+\hline
+ Lower & 30 & 50 & 70 \\  
+\hline
+ Higher & 95 & 255 & 255 \\    
+\hline
+
+\end{tabular}
+\label{table:upper_and_lower_bounds}
+\end{center}
+\end{table}
+
+After the centre point of the rectangle had been identified, the angle of the pendulum to its centre point was then calculated. This was done using basic trigonometric identities using the x and y coordinates of the point. The point was located using the \verb|moments| method which is part of the standard OpenCV library. It is used to find the centre of any shape. The angle calculation in radians is shown below in Fig \ref{fig:CW1_Task_2_code_locating_angle_calculation_radians}. 
 
 \begin{figure}
 \centerline{\includegraphics[width=.5\textwidth]{CW1_Task_2_code_locating_angle_calculation_radians}}
