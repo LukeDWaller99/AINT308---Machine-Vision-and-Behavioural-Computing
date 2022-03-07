@@ -76,14 +76,44 @@ After the whole image is checked, the counts are totalled and the highest value 
 
 To test the algorithm further, a larger dataset of pictures of cars was used. 40 more images of cars were added to the dataset, alongside the original 30 that was provided. The new dataset was initially used to train and test machine learning models. \cite{ref:KrauseStarkDengFei-Fei_3DRR2013} These were added to test how to algorithms functionality was maintained up without the use of highly cropped and optimised inputs.
 
-Overall this method worked for the dataset that was provided, but not as well for the added dataset. 
+Overall this method worked for the dataset that was provided this can be seen in Table \ref{table:car_colours_original_dataset}.
 
-INCLUDE VALUES OF FINDINGS?
+\begin{table}
+\begin{center}
+\caption{Number of Correct Car Colour Calculations - original dataset}
+\begin{tabular}{ || c || c || c || }
+\hline
+ Red & Blue & Green\\ 
+\hline
+ 10/10 & 10/10 & 10/10 \\  
+\hline
+
+\end{tabular}
+\label{table:car_colours_original_dataset}
+\end{center}
+\end{table}
+
+It can be seen in Table \ref{table:car_colours_expanded_dataset} that using non-sanitised inputs. The colour sorter does not perform as well. The only colour of car that was correctly identified consistently was red.  There were some other colours not accounted for by the colour sorter. The output RGB values for the colours did not appear to represent these colours. This was only done out of interest and gave no meaningful data to analyse. 
+
+\begin{table}
+\begin{center}
+\caption{Number of Correct Car Colour Calculations - expanded dataset}
+\begin{tabular}{ || c || c || c || c || c || c || c || }
+\hline
+ Red & Blue & Green & Black & Silver & Yellow & White\\ 
+\hline
+ 13/13 & 11/12 & 2/7 & 0/1 & 0/4 & 0/2 & 0/1 \\  
+\hline
+
+\end{tabular}
+\label{table:car_colours_expanded_dataset}
+\end{center}
+\end{table}
 
 
-The original dataset was selected such that the car made up a majority of the frame and the background was, for the most part plain as to not sway the results.
+The original dataset was selected such that the car made up a majority of the frame and the background was for the most part plain, as to not sway the results.
 
-\textit{A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}}
+\textit{A video of the code in operation can be seen in this \href{https://youtu.be/hWfO3ubkQVc}{link}}
 
 
 \subsection{Further Improvements}
@@ -187,7 +217,7 @@ The full code for task 2 is shown in Appendix \ref{appendix:task_2_full_code}.
 
 Whilst the code is simplistic it does manage to track the pendulum well and doesn't struggle to identify the end of the pendulum in the frame. Despite this, there was nothing else green within the frame, this may have caused issues if this were to be the case. 
 
-\textit{A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}}
+\textit{A video of the code in operation can be seen in this \href{https://youtu.be/SP6NCaCyRWU}{link}}
 
 \subsection{Further Improvements}
 
@@ -220,7 +250,7 @@ Fig. \ref{fig:CW1_Task_3_template_matching_w_missing_components} shows the solut
 \label{fig:CW1_Task_3_template_matching_w_missing_components}
 \end{figure}
 
-The code iterates through a loop to perform template matching on all of the components. The algorithm looks at the first component in the list \textit{Component0}, and does template matching on the whole image to check whether the component is in the image or not. This is done by by checking the first template image (Fig. \ref{fig:Component0}), and trying to match it with something in the source image (Fig. \ref{fig:PCB}). At each point, the match is calculated using the equation in Fig. \ref{fig:template_matching_ccoef_normed}. This then gives a metric of how \textit{'good'} or \textit{'bad'} the match is. For each location, a computed result is stored in a resultant matrix. 'Bright' locations on the resultant matrix indicate the best mactches and darker areas indicate very little correlation. \cite{ref:open_cv_templae_matching}
+The code iterates through a loop to perform template matching on all of the components. The algorithm looks at the first component in the list \textit{Component0}, and does template matching on the whole image to check whether the component is in the image or not. This is done by by checking the first template image (Fig. \ref{fig:Component0}), and trying to match it with something in the source image (Fig. \ref{fig:PCB}). At each point, the match is calculated using the equation in Fig. \ref{fig:template_matching_ccoef_normed}. This then gives a metric of how \textit{'good'} or \textit{'bad'} the match is. For each location, a computed result is stored in a resultant matrix. 'Bright' locations on the resultant matrix indicate the best matches and darker areas indicate very little correlation. \cite{ref:open_cv_templae_matching}
 
 \begin{figure}[h]
 \centerline{\includegraphics[width=.1\textwidth]{Component0}}
@@ -258,7 +288,7 @@ In order to do a comprehensive test of the software, a picture of the board with
 \label{fig:Missing_component_and_empty_place_on_PCB}
 \end{figure} 
 
-A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}
+\textit{A video of the code in operation can be seen in this \href{https://youtu.be/8uITJsA60Wk}{link}}
 
 \subsection{Further Improvements}
 
@@ -275,8 +305,6 @@ Keypoint detection is used often to mark out the human body. It utilises a heatm
 As per the two other examples, template matching worked well enough for the criteria provided. Despite this, template matching is rather limited and if anything more complex than a difference in scaling, this approach would prove to be ineffective. A more robust and comprehensive solution would be required in the real world.
 
 A combination of the three previous example of cross correlation could provide a lightweight initial set of tests backed up by a more computationally intensive but more robust solution. This could be used to evaluate more complex matching tasks, initially running the more lightweight, but less powerful algorithms before moving towards heavyweight but more thorough methods afterwards. 
-
-\textit{A video of the code in operation can be seen in this \href{https://github.com/LukeDWaller99/Aint308}{link}}
 
 
 \bibliographystyle{IEEEtran}
