@@ -36,7 +36,7 @@ Plymouth, Devon\\}}
 
 \begin{abstract}
 
-Machine vision is a mature technology that is becoming more prevalent within modern engineering practises. It is being utilised more in the rapidly evolving fields of autonomy and automation. This report outlines some of the functionality of a popular C/C++ based computer visions library \href{https://opencv.org}{\textit{OpenCV}}. The Assignment has been split into three tasks; Task 1, Task 2, and Task 3. The first task, Task 1, is to evaluate the colors of pixels in a picture to determine the colour of a given object in the frame (car). The second task, Task 2, was to track on object across multiple frames of a video to track its motion (swinging pendulum). The final task, Task 3, was to identify and cross correlate components on a circuit to check for any missing components.
+Machine vision is a mature technology that is becoming more prevalent within modern engineering practises. It is being utilised more in the rapidly evolving fields of autonomy and automation. This report outlines some of the functionalities of a popular C/C++ based computer visions library \href{https://opencv.org}{\textit{OpenCV}}. The Assignment has been split into three tasks; Task 1, Task 2, and Task 3. The first task, Task 1, is to evaluate the colors of pixels in a picture to determine the colour of a given object in the frame (car). The second task, Task 2, was to track on object across multiple frames of a video to track its motion (swinging pendulum). The final task, Task 3, was to identify and cross correlate components on a circuit to check for any missing components.
 
 \end{abstract}
 
@@ -87,7 +87,7 @@ The original dataset was selected such that the car made up a majority of the fr
 
 
 \subsection{Further Improvements}
-Although this task worked for the given dataset, there are ways to improve the colour detection accuracy. RGB models are typically not used for this type of task, with the Hue, Saturation, and Value (HSV) model being preferred. Initially the RGB model was built and optimised to be used on display screens, whereas the HSV model was developed to mimic how a human interpret colours. Since HSV models are able to separate colour vales, saturation, and lightness, operations can be more easily performed on the hue itself. Because we are more interested in the colour of the cars and not the lightness, a HSV colour model would be an objectively better solution. \cite{ref:HSV_vs_RGB}
+Although this task worked for the given dataset, there are ways to improve the colour detection accuracy. RGB models are typically not used for this type of task, with the Hue, Saturation, and Value (HSV) model being preferred. Initially the RGB model was built and optimised to be used on display screens, whereas the HSV model was developed to mimic how a human interpret colours. Since HSV models are able to separate colour values, saturation, and lightness, operations can be more easily performed on the hue itself. Because we are more interested in the colour of the cars and not the lightness, a HSV colour model would be an objectively better solution. \cite{ref:HSV_vs_RGB}
 
 Another improvement is to make the algorithm detect the outline of the car. This would eliminate the issues caused by having a background that could be mistaken for the body of the car. An example of this can be seen in Fig \ref{fig:red_car_green_background}. Open CV is capable of detecting cars in images and videos, albeit trivially. Although trivial, it could be used to draw a box around the car thus eliminating the background surrounding the car. \cite{ref:Vehicle_detection_in_python} 
 
@@ -123,7 +123,7 @@ Fig. \ref{fig:CW1_Task_2_code_locating_rectange} is the code used to locate the 
 \end{figure}
 
 The colour in the frame was first converted from the RGB colour space to the HSV colour space, a still of this can be seen in Appendix \ref{appendix:pendulum_rgb_hsv_space}. The justification for this has been outlined above, it makes colours easier to identify in images \cite{ref:HSV_vs_RGB}. After identifying all of the correctly coloured pixels in the frame, a rectangle was drawn and a point was identified in the middle of this rectangle. 
-The values selected for the upper and lower bounds of these colours can be seen in Table. \ref{table:upper_and_lower_bounds} The hue value was chosen such that any inconsistencies in the colour of the rectangle would not result in it being unmarked. The brightness and Saturation values go from almost 0 to their maximum value 255. This was to allow changes in brightness of the image due to shadows or lighting changes.  These values allowed the rectangle to be detected without any objects being highlighted too. The isolated rectangle can be seen in Appendix \ref{appendix:isolated_rectangle}.
+The values selected for the upper and lower bounds of these colours can be seen in Table. \ref{table:upper_and_lower_bounds} The hue value was chosen such that any inconsistencies in the colour of the rectangle would not result in it being unmarked. The brightness and saturation values go from almost 0 to their maximum value 255. This was to allow changes in brightness of the image due to shadows or lighting changes.  These values allowed the rectangle to be detected without any objects being highlighted too. The isolated rectangle can be seen in Appendix \ref{appendix:isolated_rectangle}.
 
 \begin{table}
 \begin{center}
@@ -191,9 +191,9 @@ Whilst the code is simplistic it does manage to track the pendulum well and does
 
 \subsection{Further Improvements}
 
-As suggested in the previous section, the improvements for this task revolve mainly around reducing the chance of another object of similar colour in the frame being detected. This could be done in many ways. The most simple way of doing this would be to reduce the chance of targeted body to be a unique shape to everything else in the image. Although \textit{OpenCV} does provide framework for recognising objects in multiple rotations \cite{ref:object_orientation}, it was be computationally less intense if the shape have multiple lines of symmetry. Another possibility for increasing the speed of image recognition is to train a neural network to detect rotated objects. \cite{9578190} 
+As suggested in the previous section, the improvements for this task revolve mainly around reducing the chance of another object of similar colour in the frame being detected. This could be done in many ways. The most simple way of doing this would be to reduce the chance of a targeted body to be a unique shape to everything else in the image. Although \textit{OpenCV} does provide framework for recognising objects in multiple rotations \cite{ref:object_orientation}, it would be computationally less intense if the shape has multiple lines of symmetry. Another possibility for increasing the speed of image recognition is to train a neural network to detect rotated objects. \cite{9578190} 
 
-Another way to improve results, and add complexity would be to add another distinctive colour to track and making the program look for these two adjacent colours. This approach could be scaled to a complex but robust pattern of colours. 
+Another way to improve results and add complexity would be to add another distinctive colour to track and make the program look for these two adjacent colours. This approach could be scaled to a complex but robust pattern of colours. 
 
 A final improvement could be to remove the bias using some software defined bias that could compensate for the skew of the equipment and any form of effect caused by the camera lens, such as fish-eye. \textit{OpenCV} already has baked in methods of correcting for skews such as fish-eye. \cite{ref:fish-eye}
 
