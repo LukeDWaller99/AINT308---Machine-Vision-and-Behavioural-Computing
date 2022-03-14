@@ -93,19 +93,6 @@ int main(int argc, char** argv)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         // display images untill x is pressed
         while(waitKey(10)!='x')
         {
