@@ -75,8 +75,8 @@ int main(int argc, char** argv)
         //Load images from file (needs changing for known distance targets)
 //        Mat Left =imread("../Task4/Unknown Targets/left" +to_string(ImageNum)+".jpg");
 //        Mat Right=imread("../Task4/Unknown Targets/right"+to_string(ImageNum)+".jpg");
-        Mat Left =imread("C:\\Users\\ldwaller\\Documents\\GitHub\\Aint308\\CW2\\Task4\\Distance Targets\\left" +to_string(ImageDistance)+"cm.jpg");
-        Mat Right=imread("C:\\Users\\ldwaller\\Documents\\GitHub\\Aint308\\CW2\\Task4\\Distance Targets\\right"+to_string(ImageDistance)+"cm.jpg");
+        Mat Left =imread("../Task4/Distance Targets/left" +to_string(ImageDistance)+"cm.jpg");
+        Mat Right=imread("../Task4/Distance Targets/right"+to_string(ImageDistance)+"cm.jpg");
 //        cout<<"Loaded image: "<<ImageNum<<endl;
         cout<<"Loaded image: "<<ImageDistance<<endl;
 
@@ -91,6 +91,21 @@ int main(int argc, char** argv)
 
         // ==================================Your code goes here===============================
 
+
+        int rectangle1 = 300;
+        int rectangle2 = 210;
+        int rectangleWidth = 10;
+        int rectangleHeight = 10;
+
+
+        Scalar checkingRectangle = (rectangle1, rectangle2);
+
+
+        for (int i = checkingRectangle[0]; i < checkingRectangle[0] + rectangleWidth; i++) { // runs through all the rows in the image
+                 for (int j = checkingRectangle[1]; j < checkingRectangle[1] + rectangleHeight; j++) { // runs through all the columns in the image
+                     int PixelValue = disp16bit.at<int>(i,j); // stores the RBG values in the PixelValue vector
+                 }
+        }
 
 
         // display images untill x is pressed
