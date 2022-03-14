@@ -9,13 +9,13 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    //Calibration file paths (you need to make these)
-    string intrinsic_filename = "";
-    string extrinsic_filename = "";
+    // Calibration file paths (you need to make these)
+    string intrinsic_filename = "../intrinsics.xml";
+    string extrinsic_filename = "../extrinsics.xml";
 
-    //================================================Load Calibration Files===============================================
-    //This code loads in the intrinsics.xml and extrinsics.xml calibration files, and creates: map11, map12, map21, map22.
-    //These four matrices are used to distort the camera images to apply the lense correction.
+    // ================================================Load Calibration Files===============================================
+    // This code loads in the intrinsics.xml and extrinsics.xml calibration files, and creates: map11, map12, map21, map22.
+    // These four matrices are used to distort the camera images to apply the lense correction.
     Rect roi1, roi2;
     Mat Q;
     Size img_size = {640,480};
@@ -48,12 +48,12 @@ int main(int argc, char** argv)
     initUndistortRectifyMap(M1, D1, R1, P1, img_size, CV_16SC2, map11, map12);
     initUndistortRectifyMap(M2, D2, R2, P2, img_size, CV_16SC2, map21, map22);
 
-    //===============================================Stereo SGBM Settings==================================================
-    //This sets up the block matcher, which is used to create the disparity map. The various settings can be changed to
-    //obtain different results. Note that some settings will crash the program.
+    // ===============================================Stereo SGBM Settings==================================================
+    // This sets up the block matcher, which is used to create the disparity map. The various settings can be changed to
+    // obtain different results. Note that some settings will crash the program.
 
-    int SADWindowSize=5;            //must be an odd number >=3
-    int numberOfDisparities=256;    //must be divisable by 16
+    int SADWindowSize=9;            // must be an odd number >=3
+    int numberOfDisparities=256;    // must be divisable by 16
 
     Ptr<StereoSGBM> sgbm = StereoSGBM::create(0,16,3);
     sgbm->setBlockSize(SADWindowSize);
@@ -68,13 +68,17 @@ int main(int argc, char** argv)
     sgbm->setDisp12MaxDiff(1);
     sgbm->setMode(StereoSGBM::MODE_SGBM);
 
-    //==================================================Main Program Loop================================================
+    // ==================================================Main Program Loop================================================
     int ImageNum=0; //current image index
+    int ImageDistance = 30;
     while (1){
         //Load images from file (needs changing for known distance targets)
-        Mat Left =imread("../Task4/Unknown Targets/left" +to_string(ImageNum)+".jpg");
-        Mat Right=imread("../Task4/Unknown Targets/right"+to_string(ImageNum)+".jpg");
-        cout<<"Loaded image: "<<ImageNum<<endl;
+//        Mat Left =imread("../Task4/Unknown Targets/left" +to_string(ImageNum)+".jpg");
+//        Mat Right=imread("../Task4/Unknown Targets/right"+to_string(ImageNum)+".jpg");
+        Mat Left =imread("C:\\Users\\ldwaller\\Documents\\GitHub\\Aint308\\CW2\\Task4\\Distance Targets\\left" +to_string(ImageDistance)+"cm.jpg");
+        Mat Right=imread("C:\\Users\\ldwaller\\Documents\\GitHub\\Aint308\\CW2\\Task4\\Distance Targets\\right"+to_string(ImageDistance)+"cm.jpg");
+//        cout<<"Loaded image: "<<ImageNum<<endl;
+        cout<<"Loaded image: "<<ImageDistance<<endl;
 
         //Distort image to correct for lens/positional distortion
         remap(Left, Left, map11, map12, INTER_LINEAR);
@@ -82,12 +86,10 @@ int main(int argc, char** argv)
 
         //Match left and right images to create disparity image
         Mat disp16bit, disp8bit;
-        sgbm->compute(Left, Right, disp16bit);                               //compute 16-bit greyscalse image with the stereo block matcher
-        disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.)); //Convert disparity map to an 8-bit greyscale image so it can be displayed (Only for imshow, do not use for disparity calculations)
+        sgbm->compute(Left, Right, disp16bit);                               // compute 16-bit greyscalse image with the stereo block matcher
+        disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.)); // Convert disparity map to an 8-bit greyscale image so it can be displayed (Only for imshow, do not use for disparity calculations)
 
-        //==================================Your code goes here===============================
-
-
+        // ==================================Your code goes here===============================
 
 
 
@@ -101,8 +103,10 @@ int main(int argc, char** argv)
 
 
 
-        //display images untill x is pressed
-        int key=0;
+
+
+
+        // display images untill x is pressed
         while(waitKey(10)!='x')
         {
             imshow("left", Left);
@@ -111,10 +115,18 @@ int main(int argc, char** argv)
         }
 
         //move to next image
-        ImageNum++;
+//        ImageNum++;
+        ImageDistance += 10;
+
+        if(ImageDistance>150)
+        {
+            return 0;
+        }
+
         if(ImageNum>7)
         {
-            ImageNum=0;
+//            ImageNum=0;
+            return 0;
         }
     }
 
