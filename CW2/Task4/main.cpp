@@ -92,10 +92,12 @@ int main(int argc, char** argv)
         // ==================================Your code goes here===============================
 
 
-        int rectangle1 = 300;
-        int rectangle2 = 210;
-        int rectangleWidth = 10;
-        int rectangleHeight = 10;
+        int rectangle1 = 100;
+        int rectangle2 = 255;
+        int rectangleWidth = 300;
+        int rectangleHeight = 300;
+
+        double OutputValue = 0;
 
 
         Scalar checkingRectangle = (rectangle1, rectangle2);
@@ -103,16 +105,35 @@ int main(int argc, char** argv)
 
         for (int i = checkingRectangle[0]; i < checkingRectangle[0] + rectangleWidth; i++) { // runs through all the rows in the image
                  for (int j = checkingRectangle[1]; j < checkingRectangle[1] + rectangleHeight; j++) { // runs through all the columns in the image
-                     int PixelValue = disp16bit.at<int>(i,j); // stores the RBG values in the PixelValue vector
+                     int PixelValue = (int)disp16bit.at<uchar>(i,j); // stores the RBG values in the PixelValue vector
+//                     cout << PixelValue << endl;
+                     OutputValue += PixelValue;
                  }
         }
 
+        OutputValue = (OutputValue/(rectangleHeight * rectangleWidth));
+
+//        cout << OutputValue << endl;
+
+
+
+//        for (int i = 0; i < img_size.width; i++){
+//            for (int j = 0; j < img_size.height; j++){
+//                int PixelValue = (int)disp16bit.at<uchar>(i,j);
+//                     OutputValue += PixelValue;
+//            }
+//        }
+
+//                OutputValue = (OutputValue/(img_size.width * img_size.height));
+
+                cout << OutputValue << endl;
 
         // display images untill x is pressed
         while(waitKey(10)!='x')
         {
             imshow("left", Left);
             imshow("right", Right);
+//            imshow("test", disp16bit);
             imshow("disparity", disp8bit);
         }
 
