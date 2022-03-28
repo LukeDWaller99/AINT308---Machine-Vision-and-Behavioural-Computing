@@ -9,6 +9,7 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+
     // Calibration file paths (you need to make these)
     string intrinsic_filename = "../intrinsics.xml";
     string extrinsic_filename = "../extrinsics.xml";
@@ -75,76 +76,186 @@ int main(int argc, char** argv)
     ofstream DataFile;
     DataFile.open(DataFilename);
     while (1){
-        //Load images from file (needs changing for known distance targets)
-        Mat Left_Unknow =imread("../Task4/Unknown Targets/left" +to_string(ImageNum)+".jpg");
-        Mat Right_Unknown =imread("../Task4/Unknown Targets/right"+to_string(ImageNum)+".jpg");
-        Mat Left =imread("../Task4/Distance Targets/left" +to_string(ImageDistance)+"cm.jpg");
-        Mat Right=imread("../Task4/Distance Targets/right"+to_string(ImageDistance)+"cm.jpg");
-        //        cout<<"Loaded image: "<<ImageNum<<endl;
-        cout<<"Loaded image: "<<ImageDistance<<endl;
 
-        //Distort image to correct for lens/positional distortion
-        remap(Left, Left, map11, map12, INTER_LINEAR);
-        remap(Right, Right, map21, map22, INTER_LINEAR);
+        int useKnownImages = 1;
 
-        //Match left and right images to create disparity image
-        Mat disp16bit, disp8bit;
-        sgbm->compute(Left, Right, disp16bit);                               // compute 16-bit greyscalse image with the stereo block matcher
-        disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.)); // Convert disparity map to an 8-bit greyscale image so it can be displayed (Only for imshow, do not use for disparity calculations)
+        if(useKnownImages == 1){
+            //Load images from file
+            Mat Left =imread("../Task4/Distance Targets/left" +to_string(ImageDistance)+"cm.jpg");
+            Mat Right=imread("../Task4/Distance Targets/right"+to_string(ImageDistance)+"cm.jpg");
+            cout<<"Loaded image: "<<ImageDistance<<endl;
+            //Distort image to correct for lens/positional distortion
+            remap(Left, Left, map11, map12, INTER_LINEAR);
+            remap(Right, Right, map21, map22, INTER_LINEAR);
 
-        // ==================================Your code goes here===============================
+            //Match left and right images to create disparity image
+            Mat disp16bit, disp8bit;
+            sgbm->compute(Left, Right, disp16bit);                               // compute 16-bit greyscalse image with the stereo block matcher
+            disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.)); // Convert disparity map to an 8-bit greyscale image so it can be displayed (Only for imshow, do not use for disparity calculations)
 
-        double OutputValue = 0;
+            // ==================================Your code goes here===============================
 
-        int x = 355;
-        int y = 210;
-        int rectangleWidth = 50;
-        int rectangleHeight = 50;
+            double OutputValue = 0;
 
-        Rect rect(x, y, rectangleWidth, rectangleHeight);
-        rectangle(disp8bit, rect, Scalar(255, 0, 0));
+            int x = 355;
+            int y = 210;
+            int rectangleWidth = 50;
+            int rectangleHeight = 50;
 
-        for (int i = x; i < x + rectangleWidth; i++) { // runs through all the rows in the image
-            for (int j = y; j < y + rectangleHeight; j++) { // runs through all the columns in the image
-                int PixelValue = (int)disp16bit.at<ushort>(j,i); // stores the RBG values in the PixelValue vector
-                if (PixelValue < 65000){
-                    OutputValue += PixelValue;
+            Rect rect(x, y, rectangleWidth, rectangleHeight);
+            rectangle(disp8bit, rect, Scalar(255, 0, 0));
+
+            for (int i = x; i < x + rectangleWidth; i++) { // runs through all the rows in the image
+                for (int j = y; j < y + rectangleHeight; j++) { // runs through all the columns in the image
+                    int PixelValue = (int)disp16bit.at<ushort>(j,i); // stores the RBG values in the PixelValue vector
+                    if (PixelValue < 65000){
+                        OutputValue += PixelValue;
+                    }
                 }
             }
+
+            OutputValue = (OutputValue/(rectangleHeight * rectangleWidth));
+
+            cout << "Output Value : " << OutputValue << endl;
+
+            double BF = 61280;
+            double calcDistance = BF / OutputValue;
+
+            cout << "Calculated Distance : " << calcDistance << endl;
+
+                    while(waitKey(10)!='x')
+                    {
+                        imshow("left", Left);
+                        imshow("right", Right);
+                        imshow("disparity", disp8bit);
+                    }
+
+            ImageDistance += 10;
+            if(ImageDistance>150)
+            {
+                break;
+            }
+
+        } else {
+            //Load images from file
+            Mat Left_Unknown =imread("../Task4/Unknown Targets/left" +to_string(ImageNum)+".jpg");
+            Mat Right_Unknown =imread("../Task4/Unknown Targets/right"+to_string(ImageNum)+".jpg");
+            cout<<"Loaded image: "<<ImageNum<<endl;
+            //Distort image to correct for lens/positional distortion
+            remap(Left_Unknown, Left_Unknown, map11, map12, INTER_LINEAR);
+            remap(Right_Unknown, Right_Unknown, map21, map22, INTER_LINEAR);
+
+            //Match left and right images to create disparity image
+            Mat disp16bit, disp8bit;
+            sgbm->compute(Left_Unknown, Right_Unknown, disp16bit);                               // compute 16-bit greyscalse image with the stereo block matcher
+            disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.)); // Convert disparity map to an 8-bit greyscale image so it can be displayed (Only for imshow, do not use for disparity calculations)
+
+            // ==================================Your code goes here===============================
+
+            double OutputValue = 0;
+
+            int x = 355;
+            int y = 210;
+            int rectangleWidth = 50;
+            int rectangleHeight = 50;
+
+            Rect rect(x, y, rectangleWidth, rectangleHeight);
+            rectangle(disp8bit, rect, Scalar(255, 0, 0));
+
+            for (int i = x; i < x + rectangleWidth; i++) { // runs through all the rows in the image
+                for (int j = y; j < y + rectangleHeight; j++) { // runs through all the columns in the image
+                    int PixelValue = (int)disp16bit.at<ushort>(j,i); // stores the RBG values in the PixelValue vector
+                    if (PixelValue < 65000){
+                        OutputValue += PixelValue;
+                    }
+                }
+            }
+
+            OutputValue = (OutputValue/(rectangleHeight * rectangleWidth));
+
+            cout << "Output Value : " << OutputValue << endl;
+
+            double BF = 61280;
+            double calcDistance = BF / OutputValue;
+
+            cout << "Calculated Distance : " << calcDistance << endl;
+
+            DataFile << OutputValue << endl;
+
+                    while(waitKey(10)!='x')
+                    {
+                        imshow("left", Left_Unknown);
+                        imshow("right", Right_Unknown);
+                        imshow("disparity", disp8bit);
+                    }
+                    ImageNum++;
+                    if(ImageNum>7)
+                            {
+                                break;
+                            }
         }
 
-        OutputValue = (OutputValue/(rectangleHeight * rectangleWidth));
 
-        cout << OutputValue << endl;
 
-        double BF = 61280;
-        double calcDistance = BF / OutputValue;
 
-        cout << calcDistance << endl;
+//        //Match left and right images to create disparity image
+//        Mat disp16bit, disp8bit;
+//        sgbm->compute(Left, Right, disp16bit);                               // compute 16-bit greyscalse image with the stereo block matcher
+//        disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.)); // Convert disparity map to an 8-bit greyscale image so it can be displayed (Only for imshow, do not use for disparity calculations)
 
-        DataFile << OutputValue << endl;
+//        // ==================================Your code goes here===============================
 
-        cout << OutputValue << endl;
+//        double OutputValue = 0;
 
-        // display images untill x is pressed
-        while(waitKey(10)!='x')
-        {
-            imshow("left", Left);
-            imshow("right", Right);
-            imshow("test", disp16bit);
-            imshow("disparity", disp8bit);
-        }
-        ImageDistance += 10;
-        if(ImageDistance>150)
-        {
-            break;
-        }
+//        int x = 355;
+//        int y = 210;
+//        int rectangleWidth = 50;
+//        int rectangleHeight = 50;
 
-        if(ImageNum>7)
-        {
-            //            ImageNum=0;
-            return 0;
-        }
+//        Rect rect(x, y, rectangleWidth, rectangleHeight);
+//        rectangle(disp8bit, rect, Scalar(255, 0, 0));
+
+//        for (int i = x; i < x + rectangleWidth; i++) { // runs through all the rows in the image
+//            for (int j = y; j < y + rectangleHeight; j++) { // runs through all the columns in the image
+//                int PixelValue = (int)disp16bit.at<ushort>(j,i); // stores the RBG values in the PixelValue vector
+//                if (PixelValue < 65000){
+//                    OutputValue += PixelValue;
+//                }
+//            }
+//        }
+
+//        OutputValue = (OutputValue/(rectangleHeight * rectangleWidth));
+
+//        cout << OutputValue << endl;
+
+//        double BF = 61280;
+//        double calcDistance = BF / OutputValue;
+
+//        cout << calcDistance << endl;
+
+//        DataFile << OutputValue << endl;
+
+//        cout << OutputValue << endl;
+
+//        // display images untill x is pressed
+//        while(waitKey(10)!='x')
+//        {
+//            imshow("left", Left);
+//            imshow("right", Right);
+//            imshow("test", disp16bit);
+//            imshow("disparity", disp8bit);
+//        }
+//        ImageDistance += 10;
+//        if(ImageDistance>150)
+//        {
+//            break;
+//        }
+
+//        if(ImageNum>7)
+//        {
+//            //            ImageNum=0;
+//            return 0;
+//        }
     }
 
     DataFile.close(); //close output file
