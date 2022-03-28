@@ -42,27 +42,38 @@ int main()
         }
 
         //==========================Your code goes here==========================
+        Mat greyFrame, detectedEdges;
+        int lowThreshold = 20;
+        int ratio = 10;
+        int kernel_size = 3;
+
+        // Convert Frame to Grey
+        cvtColor(Frame,greyFrame,COLOR_BGR2GRAY);
+
+        // Blur Image
+        blur(greyFrame, detectedEdges, Size(3,3));
+
+        // Canny Edge Detection
+        Canny(detectedEdges, detectedEdges, lowThreshold, lowThreshold*ratio,kernel_size);
+
+        // Find coordinates of road lines
+        vector<Vec2f> lines;
+         HoughLines(detectedEdges, lines, 1, CV_PI/180, 250, 0, 0);
 
 
 
+        // Add these coodinates to the canny detection frame
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+         for (int i = 0; i < lines.size(); i++) {
+             if(lines[i][0] < 100 || lines[i][0] > 360){
+                      cout << lines[i] << endl;
+                     lineRT(Frame, lines[i], Scalar(0,0,255), 3);
+             }
+         }
 
         //display frame
-        imshow("Video", Frame);
+        imshow("Video", detectedEdges);
+        imshow("Video 2", Frame);
         waitKey(10);
     }
 }
