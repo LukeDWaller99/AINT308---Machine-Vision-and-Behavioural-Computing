@@ -106,7 +106,7 @@ int main(int argc, char** argv)
         for (int i = checkingRectangle[0]; i < checkingRectangle[0] + rectangleWidth; i++) { // runs through all the rows in the image
                  for (int j = checkingRectangle[1]; j < checkingRectangle[1] + rectangleHeight; j++) { // runs through all the columns in the image
                      int PixelValue = (int)disp16bit.at<uchar>(i,j); // stores the RBG values in the PixelValue vector
-//                     cout << PixelValue << endl;
+//                     cout << PixelValue << endl;x
                      OutputValue += PixelValue;
                  }
         }
