@@ -12,6 +12,7 @@ int main(int argc, char** argv)
     // Calibration file paths (you need to make these)
     string intrinsic_filename = "../intrinsics.xml";
     string extrinsic_filename = "../extrinsics.xml";
+    string DataFilename = "../Task4/Data.csv";
 
     // ================================================Load Calibration Files===============================================
     // This code loads in the intrinsics.xml and extrinsics.xml calibration files, and creates: map11, map12, map21, map22.
@@ -52,7 +53,7 @@ int main(int argc, char** argv)
     // This sets up the block matcher, which is used to create the disparity map. The various settings can be changed to
     // obtain different results. Note that some settings will crash the program.
 
-    int SADWindowSize=9;            // must be an odd number >=3
+    int SADWindowSize=7;            // must be an odd number >=3
     int numberOfDisparities=256;    // must be divisable by 16
 
     Ptr<StereoSGBM> sgbm = StereoSGBM::create(0,16,3);
@@ -71,13 +72,15 @@ int main(int argc, char** argv)
     // ==================================================Main Program Loop================================================
     int ImageNum=0; //current image index
     int ImageDistance = 30;
+    ofstream DataFile;
+    DataFile.open(DataFilename);
     while (1){
         //Load images from file (needs changing for known distance targets)
-//        Mat Left =imread("../Task4/Unknown Targets/left" +to_string(ImageNum)+".jpg");
-//        Mat Right=imread("../Task4/Unknown Targets/right"+to_string(ImageNum)+".jpg");
+        Mat Left_Unknow =imread("../Task4/Unknown Targets/left" +to_string(ImageNum)+".jpg");
+        Mat Right_Unknown =imread("../Task4/Unknown Targets/right"+to_string(ImageNum)+".jpg");
         Mat Left =imread("../Task4/Distance Targets/left" +to_string(ImageDistance)+"cm.jpg");
         Mat Right=imread("../Task4/Distance Targets/right"+to_string(ImageDistance)+"cm.jpg");
-//        cout<<"Loaded image: "<<ImageNum<<endl;
+        //        cout<<"Loaded image: "<<ImageNum<<endl;
         cout<<"Loaded image: "<<ImageDistance<<endl;
 
         //Distort image to correct for lens/positional distortion
@@ -91,67 +94,60 @@ int main(int argc, char** argv)
 
         // ==================================Your code goes here===============================
 
-
-        int rectangle1 = 100;
-        int rectangle2 = 255;
-        int rectangleWidth = 300;
-        int rectangleHeight = 300;
-
         double OutputValue = 0;
 
+        int x = 355;
+        int y = 210;
+        int rectangleWidth = 50;
+        int rectangleHeight = 50;
 
-        Scalar checkingRectangle = (rectangle1, rectangle2);
+        Rect rect(x, y, rectangleWidth, rectangleHeight);
+        rectangle(disp8bit, rect, Scalar(255, 0, 0));
 
-
-        for (int i = checkingRectangle[0]; i < checkingRectangle[0] + rectangleWidth; i++) { // runs through all the rows in the image
-                 for (int j = checkingRectangle[1]; j < checkingRectangle[1] + rectangleHeight; j++) { // runs through all the columns in the image
-                     int PixelValue = (int)disp16bit.at<uchar>(i,j); // stores the RBG values in the PixelValue vector
-//                     cout << PixelValue << endl;
-                     OutputValue += PixelValue;
-                 }
+        for (int i = x; i < x + rectangleWidth; i++) { // runs through all the rows in the image
+            for (int j = y; j < y + rectangleHeight; j++) { // runs through all the columns in the image
+                int PixelValue = (int)disp16bit.at<ushort>(j,i); // stores the RBG values in the PixelValue vector
+                if (PixelValue < 65000){
+                    OutputValue += PixelValue;
+                }
+            }
         }
 
         OutputValue = (OutputValue/(rectangleHeight * rectangleWidth));
 
-//        cout << OutputValue << endl;
+        cout << OutputValue << endl;
 
+        double BF = 61280;
+        double calcDistance = BF / OutputValue;
 
+        cout << calcDistance << endl;
 
-//        for (int i = 0; i < img_size.width; i++){
-//            for (int j = 0; j < img_size.height; j++){
-//                int PixelValue = (int)disp16bit.at<uchar>(i,j);
-//                     OutputValue += PixelValue;
-//            }
-//        }
+        DataFile << OutputValue << endl;
 
-//                OutputValue = (OutputValue/(img_size.width * img_size.height));
-
-                cout << OutputValue << endl;
+        cout << OutputValue << endl;
 
         // display images untill x is pressed
         while(waitKey(10)!='x')
         {
             imshow("left", Left);
             imshow("right", Right);
-//            imshow("test", disp16bit);
+            imshow("test", disp16bit);
             imshow("disparity", disp8bit);
         }
-
-        //move to next image
-//        ImageNum++;
         ImageDistance += 10;
-
         if(ImageDistance>150)
         {
-            return 0;
+            break;
         }
 
         if(ImageNum>7)
         {
-//            ImageNum=0;
+            //            ImageNum=0;
             return 0;
         }
     }
+
+    DataFile.close(); //close output file
 
     return 0;
 }
