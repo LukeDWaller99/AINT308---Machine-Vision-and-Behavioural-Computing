@@ -47,18 +47,29 @@ int main()
         int ratio = 10;
         int kernel_size = 3;
 
+        int width = Frame.cols;
+
+        // create a rectangle the width of the screen
+        // and half the height of the screen
+
+        Point start(0,0);
+
+        Point end(width, 340);
+
         // Convert Frame to Grey
         cvtColor(Frame,greyFrame,COLOR_BGR2GRAY);
 
         // Blur Image
         blur(greyFrame, detectedEdges, Size(3,3));
 
+        rectangle(detectedEdges, start, end, Scalar(255,255,255), -1);
+
         // Canny Edge Detection
         Canny(detectedEdges, detectedEdges, lowThreshold, lowThreshold*ratio,kernel_size);
 
         // Find coordinates of road lines
         vector<Vec2f> lines;
-         HoughLines(detectedEdges, lines, 1, CV_PI/180, 250, 0, 0);
+         HoughLines(detectedEdges, lines, 1, CV_PI/180, 230, 0, 0);
 
 
 
@@ -66,7 +77,7 @@ int main()
 
          for (int i = 0; i < lines.size(); i++) {
              if(lines[i][0] < 100 || lines[i][0] > 360){
-                      cout << lines[i] << endl;
+//                      cout << lines[i] << endl;
                      lineRT(Frame, lines[i], Scalar(0,0,255), 3);
              }
          }
