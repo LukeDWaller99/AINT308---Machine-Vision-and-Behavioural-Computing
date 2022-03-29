@@ -6,8 +6,8 @@
 using namespace std;
 using namespace cv;
 
-//a drawing function that can draw a line based on rho and theta values.
-//useful for drawing lines from the hough line detector.
+// a drawing function that can draw a line based on rho and theta values.
+// useful for drawing lines from the hough line detector.
 void lineRT(Mat &Src, Vec2f L, Scalar color, int thickness){
     Point pt1, pt2;
     double a = cos(static_cast<double>(L[1]));
@@ -54,7 +54,7 @@ int main()
 
         Point start(0,0);
 
-        Point end(width, 340);
+        Point end(width, 350);
 
         // Convert Frame to Grey
         cvtColor(Frame,greyFrame,COLOR_BGR2GRAY);
@@ -75,6 +75,16 @@ int main()
 
         // Add these coodinates to the canny detection frame
 
+         int y = Frame.rows;
+         float x = 0;
+         int q = lines.size();
+
+         for(int k = 0; k > q; k++){
+            x = (lines[k][0]/sin(lines[k][1]) - (y*tan(lines[k][1])));
+            cout << x << endl;
+            circle(Frame, Point(x,y), 5, Scalar(0,255,0), -1);
+         }
+
          for (int i = 0; i < lines.size(); i++) {
              if(lines[i][0] < 100 || lines[i][0] > 360){
 //                      cout << lines[i] << endl;
@@ -82,7 +92,12 @@ int main()
              }
          }
 
+
+
+         // x = (r/sin(theta)) -(y*tan(theta))
+
         //display frame
+         imshow("Grey Scale", greyFrame);
         imshow("Video", detectedEdges);
         imshow("Video 2", Frame);
         waitKey(10);
