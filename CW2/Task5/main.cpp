@@ -43,8 +43,6 @@ int main()
             break;
         }
 
-
-
         //==========================Your code goes here==========================
         Mat greyFrame, detectedEdges;
         int lowThreshold = 20;
@@ -118,14 +116,12 @@ int main()
 
                              if ((currx2 >= lowerbound*prevx2)&&(currx2 <= upperbound*prevx2)){
                                  x2 = prevx2 * 0.9 + currx2 * 0.1;
-
                              } else {
                                  x2 = prevx2;
                              }
 
                              if ((currx4 >= lowerbound*prevx4)&&(currx4 <= upperbound*prevx4)){
                                  x4 = prevx4 * 0.9 + currx4 * 0.1;
-
                              } else {
                                  x4 = prevx4;
                              }
@@ -144,13 +140,13 @@ int main()
 
                  line(Frame, topMiddleOfLane, bottomMiddleOfLane, Scalar(255,0,0), 2);
 
-                 Mat overlay;
+                 Mat overlayFrame;
                  double alpha = 0.2;
-                 Frame.copyTo(overlay);
-                 const Point *pts = (const cv::Point*) Mat(corners).data;
-                 int npts = Mat(corners).rows;
-                 fillPoly(overlay, &pts, &npts, 1, Scalar(0, 255, 0));
-                 addWeighted(overlay, alpha, Frame, 1 - alpha, 0, Frame);
+                 Frame.copyTo(overlayFrame);
+                 const Point *pts = (const cv::Point*) Mat(cornersOfLane).data;
+                 int npts = Mat(cornersOfLane).rows;
+                 fillPoly(overlayFrame, &pts, &npts, 1, Scalar(0, 255, 0));
+                 addWeighted(overlayFrame, alpha, Frame, 1 - alpha, 0, Frame);
 
              }
          }
