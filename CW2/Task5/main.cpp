@@ -78,35 +78,25 @@ int main()
         int thershold = 230;
         HoughLines(detectedEdges, lines, rho, theta, thershold, 0, 0);
 
-
-
         // Add these coodinates to the canny detection frame
-         int y = Frame.rows/2;
          int q = lines.size();
-         int xVals[4];
-         int x;
          int bottomOfLine = Frame.rows -1;
          int topOfLine = Frame.rows - 300;
-          vector< Point> corners;
-         int x1, x2, x3, x4;
+         vector< Point> cornersOfLane;
+         int x1 = 0, x2 = 0, x3 = 0, x4 = 0;
          int prevx1 = 0, prevx2 = 0 , prevx3 = 0, prevx4 = 0;
          int currx1 = 0, currx2 = 0, currx3 = 0, currx4 = 0;
-         int upperbound = 1.01;
-         int lowerbound = 0.99;
+         float upperbound = 1.01;
+         float lowerbound = 0.99;
 
-                 for (int i = 0; i < lines.size(); i++) {
-             //             cout << lines[i][0] << endl;
+                 for (int i = 0;i < (int)lines.size(); i++) {
              if((lines[i][0] < -230)||lines[i][0] > 690){
                  //                 lineRT(Frame, lines[i], Scalar(0,0,255), 2);
                  for(int g = Frame.rows; g > Frame.rows - 300; g--){
-                     y = g;
-                     int val = 0;
                      for(int k = 0; k < q; k++){
                          if(lines[k][1]<=1){
-                             x = (lines[k][0]/cos(lines[k][1]) - (y*tan(lines[k][1])));
                              currx1 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
                              currx3 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
-
 
                              if ((currx1 >= lowerbound*prevx1)&&(currx1 <= upperbound*prevx1)){
                                  x1 = prevx1 * 0.9 + currx1 * 0.1;
@@ -120,23 +110,12 @@ int main()
                              } else {
                                  x3 = prevx3;
                              }
-
-//                             x1 = prevx1 * 0.8 + currx1 * 0.2;
-//                             x3 = prevx3 * 0.5 + currx3 * 0.5;
-
                                      prevx1 = currx1;
                                      prevx3 = currx3;
-                             //                             circle(Frame, Point(x,y), 2, Scalar(255,0,0), -1);
                          } else if(lines[k][1]>=2.3){
-                             x = (lines[k][0]/cos(lines[k][1]) - (y*tan(lines[k][1])));
                              currx2 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
                              currx4 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
-                             //                             circle(Frame, Point(x,y), 2, Scalar(255,255,0), -1);
-//                             x2 = prevx2 * 0.5 + currx2 * 0.5;
-//                             x4 = prevx4 * 0.5 + currx4 * 0.5;
 
-//                                     prevx2 = currx2;
-//                                     prevx4 = currx4;
                              if ((currx2 >= lowerbound*prevx2)&&(currx2 <= upperbound*prevx2)){
                                  x2 = prevx2 * 0.9 + currx2 * 0.1;
 
@@ -150,28 +129,20 @@ int main()
                              } else {
                                  x4 = prevx4;
                              }
-
-//                             x1 = prevx1 * 0.8 + currx1 * 0.2;
-//                             x3 = prevx3 * 0.5 + currx3 * 0.5;
-
                                      prevx2 = currx2;
                                      prevx4 = currx4;
-                         } else {x = 0;}
-                         if(x != 0){
-                         }
                      }
                  }
 
-                 corners.push_back(Point(x1, topOfLine));
-                 corners.push_back(Point(x2, topOfLine));
-                 corners.push_back(Point(x4, bottomOfLine));
-                 corners.push_back(Point(x3, bottomOfLine));
+                 cornersOfLane.push_back(Point(x1, topOfLine));
+                 cornersOfLane.push_back(Point(x2, topOfLine));
+                 cornersOfLane.push_back(Point(x4, bottomOfLine));
+                 cornersOfLane.push_back(Point(x3, bottomOfLine));
 
-                 //x1 + x2 a the top line
-                 Point topMid (((x1+x2) / 2), topOfLine);
-                 Point btmMid (((x3+x4) / 2), bottomOfLine);
+                 Point topMiddleOfLane (((x1 + x2) / 2), topOfLine);
+                 Point bottomMiddleOfLane (((x3 + x4) / 2), bottomOfLine);
 
-                 line(Frame, topMid, btmMid, Scalar(255,0,0), 2);
+                 line(Frame, topMiddleOfLane, bottomMiddleOfLane, Scalar(255,0,0), 2);
 
                  Mat overlay;
                  double alpha = 0.2;
