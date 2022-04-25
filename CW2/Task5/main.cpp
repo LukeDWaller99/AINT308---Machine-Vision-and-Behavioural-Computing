@@ -69,37 +69,46 @@ int main()
 
         // Find coordinates of road lines
         vector<Vec2f> lines;
-         HoughLines(detectedEdges, lines, 1, CV_PI/180, 230, 0, 0);
+         HoughLines(detectedEdges, lines, 1, CV_PI/180, 240, 0, 0);
 
 
 
         // Add these coodinates to the canny detection frame
 
-         int y = Frame.rows;
-         float x = 0;
-         int q = lines.size();
 
-         for(int k = 0; k > q; k++){
-            x = (lines[k][0]/sin(lines[k][1]) - (y*tan(lines[k][1])));
-            cout << x << endl;
-            circle(Frame, Point(x,y), 5, Scalar(0,255,0), -1);
-         }
+         int y = Frame.rows/2;
+         int q = lines.size();
+         int xVals[4];
+         int x;
 
          for (int i = 0; i < lines.size(); i++) {
-             if(lines[i][0] < 100 || lines[i][0] > 360){
-//                      cout << lines[i] << endl;
-                     lineRT(Frame, lines[i], Scalar(0,0,255), 3);
+             cout << lines[i][0] << endl;
+             if((lines[i][0] < -230)||lines[i][0] > 680){
+                 lineRT(Frame, lines[i], Scalar(0,0,255), 2);
+                 for(int g = Frame.rows; g > Frame.rows - 300; g--){
+                     y = g;
+                     int val = 0;
+                     for(int k = 0; k < q; k++){
+                         if(lines[k][1]<=1){
+                             x = (lines[k][0]/cos(lines[k][1]) - (y*tan(lines[k][1])));
+                             circle(Frame, Point(x,y), 2, Scalar(255,0,0), -1);
+                         } else if(lines[k][1]>=2.3){
+                             x = (lines[k][0]/cos(lines[k][1]) - (y*tan(lines[k][1])));
+                             circle(Frame, Point(x,y), 2, Scalar(255,0,0), -1);
+                         } else {x = 0;}
+                         if(x != 0){
+                         }
+                     }
+                 }
              }
          }
-
-
 
          // x = (r/sin(theta)) -(y*tan(theta))
 
         //display frame
-         imshow("Grey Scale", greyFrame);
+        imshow("Grey Scale", greyFrame);
         imshow("Video", detectedEdges);
-        imshow("Video 2", Frame);
+        imshow("Video 2: Electic Boogaloo", Frame);
         waitKey(10);
     }
 }
