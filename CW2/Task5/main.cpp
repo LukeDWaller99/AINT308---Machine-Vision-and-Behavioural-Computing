@@ -24,6 +24,7 @@ void lineRT(Mat &Src, Vec2f L, Scalar color, int thickness){
 int main()
 {
 
+
     //Open video file
     VideoCapture CarVideo("../Task5/DashCam.mp4");
     if(!CarVideo.isOpened()){
@@ -37,9 +38,12 @@ int main()
         //open the next frame from the video file, or exit the loop if its the end
         Mat Frame;
         CarVideo.read(Frame);
+
         if(Frame.empty()){
             break;
         }
+
+
 
         //==========================Your code goes here==========================
         Mat greyFrame, detectedEdges;
@@ -69,37 +73,114 @@ int main()
 
         // Find coordinates of road lines
         vector<Vec2f> lines;
-         HoughLines(detectedEdges, lines, 1, CV_PI/180, 240, 0, 0);
+        int rho = 1;
+        double theta = CV_PI/450;
+        int thershold = 230;
+        HoughLines(detectedEdges, lines, rho, theta, thershold, 0, 0);
 
 
 
         // Add these coodinates to the canny detection frame
-
-
          int y = Frame.rows/2;
          int q = lines.size();
          int xVals[4];
          int x;
+         int bottomOfLine = Frame.rows -1;
+         int topOfLine = Frame.rows - 300;
+          vector< Point> corners;
+         int x1, x2, x3, x4;
+         int prevx1 = 0, prevx2 = 0 , prevx3 = 0, prevx4 = 0;
+         int currx1 = 0, currx2 = 0, currx3 = 0, currx4 = 0;
+         int upperbound = 1.01;
+         int lowerbound = 0.99;
 
-         for (int i = 0; i < lines.size(); i++) {
-             cout << lines[i][0] << endl;
-             if((lines[i][0] < -230)||lines[i][0] > 680){
-                 lineRT(Frame, lines[i], Scalar(0,0,255), 2);
+                 for (int i = 0; i < lines.size(); i++) {
+             //             cout << lines[i][0] << endl;
+             if((lines[i][0] < -230)||lines[i][0] > 690){
+                 //                 lineRT(Frame, lines[i], Scalar(0,0,255), 2);
                  for(int g = Frame.rows; g > Frame.rows - 300; g--){
                      y = g;
                      int val = 0;
                      for(int k = 0; k < q; k++){
                          if(lines[k][1]<=1){
                              x = (lines[k][0]/cos(lines[k][1]) - (y*tan(lines[k][1])));
-                             circle(Frame, Point(x,y), 2, Scalar(255,0,0), -1);
+                             currx1 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
+                             currx3 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
+
+
+                             if ((currx1 >= lowerbound*prevx1)&&(currx1 <= upperbound*prevx1)){
+                                 x1 = prevx1 * 0.9 + currx1 * 0.1;
+                             } else {
+                                 x1 = prevx1;
+                             }
+
+                             if ((currx3 >= lowerbound*prevx3)&&(currx3 <= upperbound*prevx3)){
+                                 x3 = prevx3 * 0.9 + currx3 * 0.1;
+
+                             } else {
+                                 x3 = prevx3;
+                             }
+
+//                             x1 = prevx1 * 0.8 + currx1 * 0.2;
+//                             x3 = prevx3 * 0.5 + currx3 * 0.5;
+
+                                     prevx1 = currx1;
+                                     prevx3 = currx3;
+                             //                             circle(Frame, Point(x,y), 2, Scalar(255,0,0), -1);
                          } else if(lines[k][1]>=2.3){
                              x = (lines[k][0]/cos(lines[k][1]) - (y*tan(lines[k][1])));
-                             circle(Frame, Point(x,y), 2, Scalar(255,0,0), -1);
+                             currx2 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
+                             currx4 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
+                             //                             circle(Frame, Point(x,y), 2, Scalar(255,255,0), -1);
+//                             x2 = prevx2 * 0.5 + currx2 * 0.5;
+//                             x4 = prevx4 * 0.5 + currx4 * 0.5;
+
+//                                     prevx2 = currx2;
+//                                     prevx4 = currx4;
+                             if ((currx2 >= lowerbound*prevx2)&&(currx2 <= upperbound*prevx2)){
+                                 x2 = prevx2 * 0.9 + currx2 * 0.1;
+
+                             } else {
+                                 x2 = prevx2;
+                             }
+
+                             if ((currx4 >= lowerbound*prevx4)&&(currx4 <= upperbound*prevx4)){
+                                 x4 = prevx4 * 0.9 + currx4 * 0.1;
+
+                             } else {
+                                 x4 = prevx4;
+                             }
+
+//                             x1 = prevx1 * 0.8 + currx1 * 0.2;
+//                             x3 = prevx3 * 0.5 + currx3 * 0.5;
+
+                                     prevx2 = currx2;
+                                     prevx4 = currx4;
                          } else {x = 0;}
                          if(x != 0){
                          }
                      }
                  }
+
+                 corners.push_back(Point(x1, topOfLine));
+                 corners.push_back(Point(x2, topOfLine));
+                 corners.push_back(Point(x4, bottomOfLine));
+                 corners.push_back(Point(x3, bottomOfLine));
+
+                 //x1 + x2 a the top line
+                 Point topMid (((x1+x2) / 2), topOfLine);
+                 Point btmMid (((x3+x4) / 2), bottomOfLine);
+
+                 line(Frame, topMid, btmMid, Scalar(255,0,0), 2);
+
+                 Mat overlay;
+                 double alpha = 0.2;
+                 Frame.copyTo(overlay);
+                 const Point *pts = (const cv::Point*) Mat(corners).data;
+                 int npts = Mat(corners).rows;
+                 fillPoly(overlay, &pts, &npts, 1, Scalar(0, 255, 0));
+                 addWeighted(overlay, alpha, Frame, 1 - alpha, 0, Frame);
+
              }
          }
 
@@ -112,6 +193,5 @@ int main()
         waitKey(10);
     }
 }
-
 
 
