@@ -56,7 +56,7 @@ int main()
 
         Point start(0,0);
 
-        Point end(width, 350);
+        Point end(width, Frame.rows/2);
 
         // Convert Frame to Grey
         cvtColor(Frame,greyFrame,COLOR_BGR2GRAY);

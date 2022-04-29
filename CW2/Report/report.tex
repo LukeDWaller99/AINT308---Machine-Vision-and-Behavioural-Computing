@@ -230,13 +230,29 @@ These were the two biggest areas of uncertainty in this method and thus would ga
 Overall this task was hard to judge on the unknown data, as the results were not known and thus hard to tell the accuracy of the finalised results. Despite this, the known measurement disparity mapping was extremely successful, with a maximum error of 5.53\% and an average error of only 2.9\%. Although the methodology could have been improved by making the calibration data collection more precise and using a clearer background, the distances of measurement used (30cm-150cm) would negate the effects of measurement over that distance. 
 
 \section{Task 5: Self-driving Car Lane Detection}
-
 \subsection{Introduction}
 
 The second task was to track the lanes in dashcam footage from the front of a car driving on the road. This is one of the most complex computer vision applications within the field of autonomous cars. Mordern cars have a plethora of cars around their circumference, this allows them to capture large amounts of data whilst on the road. The real difficulty with this is how to break down the information into smaller useful chunks.  
 
 \subsection{Solution}
+
+\subsubsection{Use a method to detect the lane markings}
+
+The first part of lane detection was to convert the video frames to grey scale, this was done to reduce the informational load to compute. Although Canny Edge detection works less effectively using a grey scale image \cite{Canny_On_Grey}, the lines for the edges of the road were still found and detected as edges. The frames are converted to grey scale using OpenCV's \verb|cvtColor| function - insert REF -- insert figure of the code.
+
+After the frames are converted to grey scale, the frame is then blurred using OpenCV's \verb|blur| function -- insert REF -- insert fig of the code. This was done to reduce the noise in the image, this makes the edge detection perform better \cite{Image_Blurring}. 
+
+Once the  image was blurred, a rectangular mask was placed over the top half of the image using the \verb|rectangle| function - insert REF -- insert fig of the code. This was used to eliminate the top half of the image which would not be useful for finding the road markings. 
+ 
+Canny Edge detection was then conducted on the masked frame using OpenCV's \verb|Canny| method - insert OPENCV REF here -- insert fig of the code. Canny Edge was chosen because it is deemed to be one of the best edge detection algorithms \cite{Canny2009CannyED}. Canny Edge detection uses non-maximum suppression \cite{non-maximum_supression} and Hysteresis Processes \cite{Hysteresis_Thresholding}. Non-maximum Suppression and Hysteresis Process reduce the number of false edges and thus create a better starting point for further processing such as Hough Transforms. 
+
+After the Canny Edge detection, Hough Transforms are used to...
+
+\subsubsection{Display a video with lanes detected}
+
+
 \subsection{Further Improvements}
+
 \subsection{Conclusion}
 
 \bibliographystyle{IEEEtran}
