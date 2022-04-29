@@ -80,6 +80,7 @@ int main(int argc, char** argv)
         int useKnownImages = 1;
 
         if(useKnownImages == 1){
+
             //Load images from file
             Mat Left =imread("../Task4/Distance Targets/left" +to_string(ImageDistance)+"cm.jpg");
             Mat Right=imread("../Task4/Distance Targets/right"+to_string(ImageDistance)+"cm.jpg");
@@ -90,8 +91,11 @@ int main(int argc, char** argv)
 
             //Match left and right images to create disparity image
             Mat disp16bit, disp8bit;
-            sgbm->compute(Left, Right, disp16bit);                               // compute 16-bit greyscalse image with the stereo block matcher
-            disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.)); // Convert disparity map to an 8-bit greyscale image so it can be displayed (Only for imshow, do not use for disparity calculations)
+            // compute 16-bit greyscalse image with the stereo block matcher
+            sgbm->compute(Left, Right, disp16bit);
+            disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.));
+            // Convert disparity map to an 8-bit greyscale image so it can be displayed
+            // (Only for imshow, do not use for disparity calculations)
 
             // ==================================Your code goes here===============================
 
@@ -105,9 +109,12 @@ int main(int argc, char** argv)
             Rect rect(x, y, rectangleWidth, rectangleHeight);
             rectangle(disp8bit, rect, Scalar(255, 0, 0));
 
-            for (int i = x; i < x + rectangleWidth; i++) { // runs through all the rows in the image
-                for (int j = y; j < y + rectangleHeight; j++) { // runs through all the columns in the image
-                    int PixelValue = (int)disp16bit.at<ushort>(j,i); // stores the RBG values in the PixelValue vector
+            // runs through all the rows in the image
+            for (int i = x; i < x + rectangleWidth; i++) {
+                // runs through all the columns in the image
+                for (int j = y; j < y + rectangleHeight; j++) {
+                    // stores the RBG values in the PixelValue vector
+                    int PixelValue = (int)disp16bit.at<ushort>(j,i);
                     if (PixelValue < 65000){
                         OutputValue += PixelValue;
                     }
@@ -118,7 +125,10 @@ int main(int argc, char** argv)
 
             cout << "Output Value : " << OutputValue << endl;
 
+            // using calulated BF value
             double BF = 61280;
+
+            // using the disparity equation
             double calcDistance = BF / OutputValue;
 
             cout << "Calculated Distance : " << calcDistance << endl;

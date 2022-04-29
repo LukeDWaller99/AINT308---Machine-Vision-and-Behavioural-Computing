@@ -77,81 +77,82 @@ int main()
         HoughLines(detectedEdges, lines, rho, theta, thershold, 0, 0);
 
         // Add these coodinates to the canny detection frame
-         int q = lines.size();
-         int bottomOfLine = Frame.rows -1;
-         int topOfLine = Frame.rows - 300;
-         vector< Point> cornersOfLane;
-         int x1 = 0, x2 = 0, x3 = 0, x4 = 0;
-         int prevx1 = 0, prevx2 = 0 , prevx3 = 0, prevx4 = 0;
-         int currx1 = 0, currx2 = 0, currx3 = 0, currx4 = 0;
-         float upperbound = 1.01;
-         float lowerbound = 0.99;
+        int q = lines.size();
+        int bottomOfLine = Frame.rows -1;
+        int topOfLine = Frame.rows - 300;
+        vector< Point> cornersOfLane;
+        int x1 = 0, x2 = 0, x3 = 0, x4 = 0;
+        int prevx1 = 0, prevx2 = 0 , prevx3 = 0, prevx4 = 0;
+        int currx1 = 0, currx2 = 0, currx3 = 0, currx4 = 0;
+        float upperbound = 1.01;
+        float lowerbound = 0.99;
 
-                 for (int i = 0;i < (int)lines.size(); i++) {
-             if((lines[i][0] < -230)||lines[i][0] > 690){
-                 //                 lineRT(Frame, lines[i], Scalar(0,0,255), 2);
-                 for(int g = Frame.rows; g > Frame.rows - 300; g--){
-                     for(int k = 0; k < q; k++){
-                         if(lines[k][1]<=1){
-                             currx1 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
-                             currx3 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
+        for (int i = 0;i < (int)lines.size(); i++) {
+            if((lines[i][0] < -230)||lines[i][0] > 690){
+                // lineRT(Frame, lines[i], Scalar(0,0,255), 2);
+                for(int g = Frame.rows; g > Frame.rows - 300; g--){
+                    for(int k = 0; k < q; k++){
+                        if(lines[k][1]<=1){
+                            currx1 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
+                            currx3 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
 
-                             if ((currx1 >= lowerbound*prevx1)&&(currx1 <= upperbound*prevx1)){
-                                 x1 = prevx1 * 0.9 + currx1 * 0.1;
-                             } else {
-                                 x1 = prevx1;
-                             }
+                            if ((currx1 >= lowerbound*prevx1)&&(currx1 <= upperbound*prevx1)){
+                                x1 = prevx1 * 0.9 + currx1 * 0.1;
+                            } else {
+                                x1 = prevx1;
+                            }
 
-                             if ((currx3 >= lowerbound*prevx3)&&(currx3 <= upperbound*prevx3)){
-                                 x3 = prevx3 * 0.9 + currx3 * 0.1;
+                            if ((currx3 >= lowerbound*prevx3)&&(currx3 <= upperbound*prevx3)){
+                                x3 = prevx3 * 0.9 + currx3 * 0.1;
 
-                             } else {
-                                 x3 = prevx3;
-                             }
-                                     prevx1 = currx1;
-                                     prevx3 = currx3;
-                         } else if(lines[k][1]>=2.3){
-                             currx2 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
-                             currx4 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
+                            } else {
+                                x3 = prevx3;
+                            }
+                            prevx1 = currx1;
+                            prevx3 = currx3;
+                        } else if(lines[k][1]>=2.3){
+                            currx2 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
+                            currx4 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
 
-                             if ((currx2 >= lowerbound*prevx2)&&(currx2 <= upperbound*prevx2)){
-                                 x2 = prevx2 * 0.9 + currx2 * 0.1;
-                             } else {
-                                 x2 = prevx2;
-                             }
+                            if ((currx2 >= lowerbound*prevx2)&&(currx2 <= upperbound*prevx2)){
+                                x2 = prevx2 * 0.9 + currx2 * 0.1;
+                            } else {
+                                x2 = prevx2;
+                            }
 
-                             if ((currx4 >= lowerbound*prevx4)&&(currx4 <= upperbound*prevx4)){
-                                 x4 = prevx4 * 0.9 + currx4 * 0.1;
-                             } else {
-                                 x4 = prevx4;
-                             }
-                                     prevx2 = currx2;
-                                     prevx4 = currx4;
-                     }
-                 }
+                            if ((currx4 >= lowerbound*prevx4)&&(currx4 <= upperbound*prevx4)){
+                                x4 = prevx4 * 0.9 + currx4 * 0.1;
+                            } else {
+                                x4 = prevx4;
+                            }
+                            prevx2 = currx2;
+                            prevx4 = currx4;
+                        }
+                    }
+                }
 
-                 cornersOfLane.push_back(Point(x1, topOfLine));
-                 cornersOfLane.push_back(Point(x2, topOfLine));
-                 cornersOfLane.push_back(Point(x4, bottomOfLine));
-                 cornersOfLane.push_back(Point(x3, bottomOfLine));
+                cornersOfLane.push_back(Point(x1, topOfLine));
+                cornersOfLane.push_back(Point(x2, topOfLine));
+                cornersOfLane.push_back(Point(x4, bottomOfLine));
+                cornersOfLane.push_back(Point(x3, bottomOfLine));
 
-                 Point topMiddleOfLane (((x1 + x2) / 2), topOfLine);
-                 Point bottomMiddleOfLane (((x3 + x4) / 2), bottomOfLine);
+                Point topMiddleOfLane (((x1 + x2) / 2), topOfLine);
+                Point bottomMiddleOfLane (((x3 + x4) / 2), bottomOfLine);
 
-                 line(Frame, topMiddleOfLane, bottomMiddleOfLane, Scalar(255,0,0), 2);
+                line(Frame, topMiddleOfLane, bottomMiddleOfLane, Scalar(255,0,0), 2);
 
-                 Mat overlayFrame;
-                 double alpha = 0.2;
-                 Frame.copyTo(overlayFrame);
-                 const Point *pts = (const cv::Point*) Mat(cornersOfLane).data;
-                 int npts = Mat(cornersOfLane).rows;
-                 fillPoly(overlayFrame, &pts, &npts, 1, Scalar(0, 255, 0));
-                 addWeighted(overlayFrame, alpha, Frame, 1 - alpha, 0, Frame);
+                Mat overlayFrame;
+                double alpha = 0.2;
+                Frame.copyTo(overlayFrame);
+                const Point *pts = (const cv::Point*) Mat(cornersOfLane).data;
+                int npts = Mat(cornersOfLane).rows;
+                fillPoly(overlayFrame, &pts, &npts, 1, Scalar(0, 255, 0));
+                addWeighted(overlayFrame, alpha, Frame, 1 - alpha, 0, Frame);
 
-             }
-         }
+            }
+        }
 
-         // x = (r/sin(theta)) -(y*tan(theta))
+        // x = (r/sin(theta)) -(y*tan(theta))
 
         //display frame
         imshow("Grey Scale", greyFrame);
