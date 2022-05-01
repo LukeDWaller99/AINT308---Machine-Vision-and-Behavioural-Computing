@@ -65,7 +65,7 @@ The solution to this task was split up into multiple parts. Firstly, using the c
 
 \subsubsection{Camera Calibration and Stereo Image Correction}
 
-Stereo camera needs to be calibrated to one another before they can be used for stereo vision. Corrections need to be made for both physical misalignments (extrinsic error), and lens distortion(intrinsic error) \cite{Stero_Calibration}. This was done using the \href{https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=stereocalibration}\textit{SteroCalibration} program provided by \textit{OpenCV} \cite{Book_Calibration}.
+Stereo camera needs to be calibrated to one another before they can be used for stereo vision. Corrections need to be made for both physical misalignments (extrinsic error), and lens distortion(intrinsic error) \cite{Stero_Calibration}. This was done using the \href{https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=stereocalibration}{\texttt{SteroCalibration}} program provided by \textit{OpenCV} \cite{Book_Calibration}.
 
 The program firstly reads in image pairs (taken from the left and right camera) of a checkerboard pattern target placed in different locations and orientations. This allows the program to create a list of intrinsics and extrinsic parameters to allow for these effects in the program. The checkerboard is of known size so the program can calibrate what it sees against what it is expecting. This known as the Bouquet stereo image calibration \cite{Bouget}.
 
@@ -118,7 +118,7 @@ B \cdot f = Disparity \cdot Distance
 \end{equation}
 
 \begin{equation} \label{eq:AverageDisparity}
-\frac{Distance \cdot Disparity}{Total Number of Values}
+(B \cdot f)_\textrm{average} = \frac{Distance \cdot Disparity}{Total Number of Values}
 \end{equation}
 
 \begin{table}
@@ -238,18 +238,111 @@ The second task was to track the lanes in dashcam footage from the front of a ca
 
 \subsubsection{Use a method to detect the lane markings}
 
-The first part of lane detection was to convert the video frames to grey scale, this was done to reduce the informational load to compute. Although Canny Edge detection works less effectively using a grey scale image \cite{Canny_On_Grey}, the lines for the edges of the road were still found and detected as edges. The frames are converted to grey scale using OpenCV's \verb|cvtColor| function - insert REF -- insert figure of the code.
+The first part of lane detection was to convert the video frames to grey scale, this was done to reduce the informational load to compute. Although Canny Edge detection works less effectively using a grey scale image \cite{Canny_On_Grey}, the lines for the edges of the road were still found and detected as edges. The frames are converted to grey scale using OpenCV's \href{https://docs.opencv.org/4.x/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab}{\texttt{cvtColor}} function as seen in fig \ref{fig:cvtColor}.
 
-After the frames are converted to grey scale, the frame is then blurred using OpenCV's \verb|blur| function -- insert REF -- insert fig of the code. This was done to reduce the noise in the image, this makes the edge detection perform better \cite{Image_Blurring}. 
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{cvtColor}}
+\caption{Code to Convert from colour to grey scale}
+\label{fig:cvtColor}
+\end{figure}
 
-Once the  image was blurred, a rectangular mask was placed over the top half of the image using the \verb|rectangle| function - insert REF -- insert fig of the code. This was used to eliminate the top half of the image which would not be useful for finding the road markings. 
+After the frames are converted to grey scale, the frame is then blurred using OpenCV's \href{https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html#ga8c45db9afe636703801b0b2e440fce37}{\texttt{blur}} function -- insert REF -- insert fig of the code. This was done to reduce the noise in the image, this makes the edge detection perform better \cite{Image_Blurring}.
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{blur}}
+\caption{Code to Blur Frame}
+\label{fig:blur}
+\end{figure} 
+
+Once the  image was blurred, a rectangular mask was placed over the top half of the image using the \href{https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga07d2f74cadcf8e305e810ce8eed13bc9}{\texttt{rectangle}} function - insert REF -- insert fig of the code. This was used to eliminate the top half of the image which would not be useful for finding the road markings. 
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{rectangle}}
+\caption{Code to Create a rectangle over a frame}
+\label{fig:rectangle}
+\end{figure}
  
-Canny Edge detection was then conducted on the masked frame using OpenCV's \verb|Canny| method - insert OPENCV REF here -- insert fig of the code. Canny Edge was chosen because it is deemed to be one of the best edge detection algorithms \cite{Canny2009CannyED}. Canny Edge detection uses non-maximum suppression \cite{non-maximum_supression} and Hysteresis Processes \cite{Hysteresis_Thresholding}. Non-maximum Suppression and Hysteresis Process reduce the number of false edges and thus create a better starting point for further processing such as Hough Transforms. 
+Canny Edge detection was then conducted on the masked frame using OpenCV's \href{https://docs.opencv.org/4.x/dd/d1a/group__imgproc__feature.html#ga04723e007ed888ddf11d9ba04e2232de}{\texttt{Canny}} method - insert OPENCV REF here -- insert fig of the code. Canny Edge was chosen because it is deemed to be one of the best edge detection algorithms \cite{Canny2009CannyED}. Canny Edge detection uses non-maximum suppression \cite{non-maximum_supression} and Hysteresis Processes \cite{Hysteresis_Thresholding}. Non-maximum Suppression and Hysteresis Process reduce the number of false edges and thus create a better starting point for further processing such as Hough Transforms. 
 
-After the Canny Edge detection, Hough Transforms are used to...
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{Canny}}
+\caption{Code to Run Canny edge detection}
+\label{fig:Canny}
+\end{figure}
+
+After the Canny Edge detection, Hough Transforms are used as a method of extracting features from an image. It can be used to isolate features of regular curves such as, circles, lines, and ellipses. At it's simplest implementation, Hough Transforms can be used to detect straight lines, like the lines at the side of a road. Computational complexity deters the use of Hough transforms in a lot of situations. However,for finding straight lines, the most simplistic use case, Hough Lines were the chosen method of feature extraction \cite{Hough_Transform}.
+
+The specific implementation used chosen was \href{https://docs.opencv.org/3.4/d9/db0/tutorial_hough_lines.html}{\texttt{HoughLines}}, which can be seen in fig \ref{fig:HoughLines}.
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{HoughLines}}
+\caption{Code to Run Hough line detection}
+\label{fig:HoughLines}
+\end{figure}
+
+Fig \ref{fig:Polar_Coordinates_for_Hough_transforms} show the representation of Hough Lines in polar coordinate form. This is used to show the line as a singular point$(\rho, \theta)$ in the hough space. 
+
+The Hough Transform constrcuts an MxN array (where M is the distance from the origin $\rho$, and N is the corresponding angle from the origin $\theta$). These values for $\rho$ and $\theta$ can be used to find the corrinsponding x and y coordinates for each point along the lines. This is how the lines were extracted to draw on the edges of the road. 
+
+\begin{figure}[H]
+\centering
+\subfigure[Image Space]{
+\includegraphics[width=.225\textwidth]{Hough_Transform_Diagram_Image_Space}
+}
+\subfigure[Hough Space]{
+\includegraphics[width=.125\textwidth]{Hough_Transform_Diagram_Hough_Space}
+}
+\caption{Polar Coordinates for Hough Spaceh}
+\label{fig:Polar_Coordinates_for_Hough_transforms}
+\end{figure} 
 
 \subsubsection{Display a video with lanes detected}
 
+Once the polar coordinates were instantiated, they were evaluated and the lanes were extracted from this. 
+
+Initially a group of variables were created to calculate the lanes from the lines of the detection algorithm. 
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{setup_variables_for_lane_detection}}
+\caption{Set up Variables for Lane Detection and Plotting}
+\label{fig:setup_variables_for_lane_detection}
+\end{figure}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{itteration_loops_for_lane_detection}}
+\caption{Loops for lane detection algorithm}
+\label{fig:itteration_loops_for_lane_detection}
+\end{figure}
+
+extracts x by using equation \ref{eq:x_from_y}.
+
+\begin{equation} \label{eq:x_from_y}
+x = \left(\frac{\rho}{sin(\theta)}\right) - (y \cdot tan(\theta))
+\end{equation}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{checking_angles_of_lines_1}}
+\caption{checking angles of lines 1}
+\label{fig:checking_angles_of_lines_1}
+\end{figure}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{checking_angles_of_lines_2_3}}
+\caption{checking angles of lines 2.3}
+\label{fig:checking_angles_of_lines_2.3}
+\end{figure}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{line_in_middle_of_road}}
+\caption{Line in middle of road}
+\label{fig:line_in_middle_of_road}
+\end{figure}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{polygon_of_lanes}}
+\caption{Polygon of Lanes}
+\label{fig:polygon_of_lanes}
+\end{figure}
 
 \subsection{Further Improvements}
 

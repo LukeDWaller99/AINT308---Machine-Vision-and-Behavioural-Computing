@@ -67,97 +67,119 @@ int main()
         rectangle(detectedEdges, start, end, Scalar(255,255,255), -1);
 
         // Canny Edge Detection
-        Canny(detectedEdges, detectedEdges, lowThreshold, lowThreshold*ratio,kernel_size);
+        Canny(detectedEdges, detectedEdges,
+              lowThreshold, lowThreshold*ratio,kernel_size);
 
         // Find coordinates of road lines
         vector<Vec2f> lines;
-        int rho = 1;
-        double theta = CV_PI/450;
-        int thershold = 230;
+        int rho = 1;                // resolution parameter (rho) in pixels
+        double theta = CV_PI/450;   // resolution parameter (theta) in radians
+        int thershold = 230;        // Minimum number of interesctions to 'detect' a line
         HoughLines(detectedEdges, lines, rho, theta, thershold, 0, 0);
 
-        // Add these coodinates to the canny detection frame
-        int q = lines.size();
-        int bottomOfLine = Frame.rows -1;
-        int topOfLine = Frame.rows - 300;
-        vector< Point> cornersOfLane;
-        int x1 = 0, x2 = 0, x3 = 0, x4 = 0;
-        int prevx1 = 0, prevx2 = 0 , prevx3 = 0, prevx4 = 0;
-        int currx1 = 0, currx2 = 0, currx3 = 0, currx4 = 0;
-        float upperbound = 1.01;
-        float lowerbound = 0.99;
 
+        int q = lines.size(); // constant used for loop interation
+        int bottomOfLine = Frame.rows -1; // bottom y coordinate of detected road lanes
+        int topOfLine = Frame.rows - 300; // top y corrdinate of detected road lanes
+        vector< Point> cornersOfLane; // vector of four points, corners of drawn lane region
+        int xVals[4]; // values of the x-coordinates of the detected lines
+        int prevX[4]; // old coordinates of x-coordinates of the detected lines
+        int currX[4]; // new coordinates of x-coordinates of the detected lines
+        float upperbound = 1.01; // upper limit of difference in detected lines
+        float lowerbound = 0.99; // lower limit of difference in detected lines
+
+        // itterate through number of lines found
         for (int i = 0;i < (int)lines.size(); i++) {
-            if((lines[i][0] < -230)||lines[i][0] > 690){
-                // lineRT(Frame, lines[i], Scalar(0,0,255), 2);
-                for(int g = Frame.rows; g > Frame.rows - 300; g--){
-                    for(int k = 0; k < q; k++){
-                        if(lines[k][1]<=1){
-                            currx1 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
-                            currx3 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
+            // output the lines found using the Hough lines algorithm
+            // lineRT(Frame, lines[i], Scalar(0,0,255), 2);
 
-                            if ((currx1 >= lowerbound*prevx1)&&(currx1 <= upperbound*prevx1)){
-                                x1 = prevx1 * 0.9 + currx1 * 0.1;
-                            } else {
-                                x1 = prevx1;
-                            }
+            // itterate through the desired y coordinates for lines
+            for(int g = Frame.rows; g > Frame.rows - 300; g--){
+                // itterate through the number of lines found for each given y value
+//                for(int i = 0; i < q; i++){
 
-                            if ((currx3 >= lowerbound*prevx3)&&(currx3 <= upperbound*prevx3)){
-                                x3 = prevx3 * 0.9 + currx3 * 0.1;
 
-                            } else {
-                                x3 = prevx3;
-                            }
-                            prevx1 = currx1;
-                            prevx3 = currx3;
-                        } else if(lines[k][1]>=2.3){
-                            currx2 = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
-                            currx4 = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
+                    if(lines[i][1]<=1){ // if the angle of the lines (in radians) is less than 1
 
-                            if ((currx2 >= lowerbound*prevx2)&&(currx2 <= upperbound*prevx2)){
-                                x2 = prevx2 * 0.9 + currx2 * 0.1;
-                            } else {
-                                x2 = prevx2;
-                            }
+                        // equations used to extract x coordinate for a given y value
+                        currX[0] = (lines[i][0]/cos(lines[i][1]) - (topOfLine*tan(lines[i][1])));
+                        currX[2] = (lines[i][0]/cos(lines[i][1]) - (bottomOfLine*tan(lines[i][1])));
 
-                            if ((currx4 >= lowerbound*prevx4)&&(currx4 <= upperbound*prevx4)){
-                                x4 = prevx4 * 0.9 + currx4 * 0.1;
-                            } else {
-                                x4 = prevx4;
-                            }
-                            prevx2 = currx2;
-                            prevx4 = currx4;
+                        // if the current value is within a threshold ( to reduce jittering)
+                        if ((currX[0] >= lowerbound*prevX[0])&&(currX[0] <= upperbound*prevX[0])){
+                            xVals[0] = prevX[0] * 0.9 + currX[0] * 0.1;
+                        } else {
+                            xVals[0] = prevX[0];
                         }
-                    }
+
+                        // if the current value is within a threshold ( to reduce jittering)
+                        if ((currX[2] >= lowerbound*prevX[2])&&(currX[2] <= upperbound*prevX[2])){
+                            xVals[2] = prevX[2] * 0.9 + currX[2] * 0.1;
+
+                        } else {
+                            xVals[2] = prevX[2];
+                        }
+
+                        // update current value
+                        prevX[0] = currX[0];
+                        prevX[2] = currX[2];
+
+                    } else if(lines[i][1]>=2.3){ // if the angle of the lines (in radians) is greater than 2.3
+
+                        // equations used to extract x coordinate for a given y value
+                        currX[1] = (lines[i][0]/cos(lines[i][1]) - (topOfLine*tan(lines[i][1])));
+                        currX[3] = (lines[i][0]/cos(lines[i][1]) - (bottomOfLine*tan(lines[i][1])));
+
+                        // if the current value is within a threshold ( to reduce jittering)
+                        if ((currX[1] >= lowerbound*prevX[1])&&(currX[1] <= upperbound*prevX[1])){
+                            xVals[1] = prevX[1] * 0.9 + currX[1] * 0.1;
+                        } else {
+                            xVals[1] = prevX[1];
+                        }
+
+                        // if the current value is within a threshold ( to reduce jittering)
+                        if ((currX[3] >= lowerbound*prevX[3])&&(currX[3] <= upperbound*prevX[3])){
+                            xVals[3] = prevX[3] * 0.9 + currX[3] * 0.1;
+                        } else {
+                            xVals[3] = prevX[3];
+                        }
+
+                        // update current value
+                        prevX[1] = currX[1];
+                        prevX[3] = currX[3];
+
+//                    }
                 }
-
-                cornersOfLane.push_back(Point(x1, topOfLine));
-                cornersOfLane.push_back(Point(x2, topOfLine));
-                cornersOfLane.push_back(Point(x4, bottomOfLine));
-                cornersOfLane.push_back(Point(x3, bottomOfLine));
-
-                Point topMiddleOfLane (((x1 + x2) / 2), topOfLine);
-                Point bottomMiddleOfLane (((x3 + x4) / 2), bottomOfLine);
-
-                line(Frame, topMiddleOfLane, bottomMiddleOfLane, Scalar(255,0,0), 2);
-
-                Mat overlayFrame;
-                double alpha = 0.2;
-                Frame.copyTo(overlayFrame);
-                const Point *pts = (const cv::Point*) Mat(cornersOfLane).data;
-                int npts = Mat(cornersOfLane).rows;
-                fillPoly(overlayFrame, &pts, &npts, 1, Scalar(0, 255, 0));
-                addWeighted(overlayFrame, alpha, Frame, 1 - alpha, 0, Frame);
-
             }
+
+
+            // add previously calculated values
+            cornersOfLane.push_back(Point(xVals[0], topOfLine));
+            cornersOfLane.push_back(Point(xVals[1], topOfLine));
+            cornersOfLane.push_back(Point(xVals[3], bottomOfLine));
+            cornersOfLane.push_back(Point(xVals[2], bottomOfLine));
+
+            // map the line in the middle of the road
+            Point topMiddleOfLane (((xVals[0] + xVals[1]) / 2), topOfLine);
+            Point bottomMiddleOfLane (((xVals[2] + xVals[3]) / 2), bottomOfLine);
+
+            // plot line in the middle of the road
+            line(Frame, topMiddleOfLane, bottomMiddleOfLane, Scalar(255,0,0), 2);
+
+            // draw the detected lane onto the frame
+            Mat overlayFrame;
+            double alpha = 0.2;
+            Frame.copyTo(overlayFrame);
+            const Point *pts = (const cv::Point*) Mat(cornersOfLane).data;
+            int npts = Mat(cornersOfLane).rows;
+            fillPoly(overlayFrame, &pts, &npts, 1, Scalar(0, 255, 0));
+            addWeighted(overlayFrame, alpha, Frame, 1 - alpha, 0, Frame);
         }
 
-        // x = (r/sin(theta)) -(y*tan(theta))
-
-        //display frame
-        imshow("Grey Scale", greyFrame);
-        imshow("Video", detectedEdges);
-        imshow("Video 2: Electic Boogaloo", Frame);
+        //display frames
+        imshow("Grey Scale - 10618407", greyFrame);
+        imshow("Canny Detected Lines - 10618407", detectedEdges);
+        imshow("Output Video of Detected Lane - 10618407", Frame);
         waitKey(10);
     }
 }
