@@ -95,15 +95,15 @@ int main()
 
             // itterate through the desired y coordinates for lines
             for(int g = Frame.rows; g > Frame.rows - 300; g--){
+
                 // itterate through the number of lines found for each given y value
-//                for(int i = 0; i < q; i++){
+                for(int k = 0; k < q; k++){
 
-
-                    if(lines[i][1]<=1){ // if the angle of the lines (in radians) is less than 1
+                    if(lines[k][1]<=1){ // if the angle of the lines (in radians) is less than 1
 
                         // equations used to extract x coordinate for a given y value
-                        currX[0] = (lines[i][0]/cos(lines[i][1]) - (topOfLine*tan(lines[i][1])));
-                        currX[2] = (lines[i][0]/cos(lines[i][1]) - (bottomOfLine*tan(lines[i][1])));
+                        currX[0] = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
+                        currX[2] = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
 
                         // if the current value is within a threshold ( to reduce jittering)
                         if ((currX[0] >= lowerbound*prevX[0])&&(currX[0] <= upperbound*prevX[0])){
@@ -124,11 +124,11 @@ int main()
                         prevX[0] = currX[0];
                         prevX[2] = currX[2];
 
-                    } else if(lines[i][1]>=2.3){ // if the angle of the lines (in radians) is greater than 2.3
+                    } else if(lines[k][1]>=2.3){ // if the angle of the lines (in radians) is greater than 2.3
 
                         // equations used to extract x coordinate for a given y value
-                        currX[1] = (lines[i][0]/cos(lines[i][1]) - (topOfLine*tan(lines[i][1])));
-                        currX[3] = (lines[i][0]/cos(lines[i][1]) - (bottomOfLine*tan(lines[i][1])));
+                        currX[1] = (lines[k][0]/cos(lines[k][1]) - (topOfLine*tan(lines[k][1])));
+                        currX[3] = (lines[k][0]/cos(lines[k][1]) - (bottomOfLine*tan(lines[k][1])));
 
                         // if the current value is within a threshold ( to reduce jittering)
                         if ((currX[1] >= lowerbound*prevX[1])&&(currX[1] <= upperbound*prevX[1])){
@@ -148,16 +148,9 @@ int main()
                         prevX[1] = currX[1];
                         prevX[3] = currX[3];
 
-//                    }
+                    }
                 }
             }
-
-
-            // add previously calculated values
-            cornersOfLane.push_back(Point(xVals[0], topOfLine));
-            cornersOfLane.push_back(Point(xVals[1], topOfLine));
-            cornersOfLane.push_back(Point(xVals[3], bottomOfLine));
-            cornersOfLane.push_back(Point(xVals[2], bottomOfLine));
 
             // map the line in the middle of the road
             Point topMiddleOfLane (((xVals[0] + xVals[1]) / 2), topOfLine);
@@ -165,6 +158,12 @@ int main()
 
             // plot line in the middle of the road
             line(Frame, topMiddleOfLane, bottomMiddleOfLane, Scalar(255,0,0), 2);
+
+            // add previously calculated values
+            cornersOfLane.push_back(Point(xVals[0], topOfLine));
+            cornersOfLane.push_back(Point(xVals[1], topOfLine));
+            cornersOfLane.push_back(Point(xVals[3], bottomOfLine));
+            cornersOfLane.push_back(Point(xVals[2], bottomOfLine));
 
             // draw the detected lane onto the frame
             Mat overlayFrame;
