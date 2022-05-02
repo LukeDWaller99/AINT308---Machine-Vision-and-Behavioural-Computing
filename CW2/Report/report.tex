@@ -8,6 +8,8 @@
 \usepackage{float}
 \usepackage{indentfirst}
 \usepackage[compact]{titlesec}
+\usepackage{mathtools}
+
 \setlength{\parindent}{11pt}
 \newcommand{\forceindent}{\leavevmode{\parindent=1em\indent}}
 
@@ -270,7 +272,7 @@ Canny Edge detection was then conducted on the masked frame using OpenCV's \href
 \label{fig:Canny}
 \end{figure}
 
-After the Canny Edge detection, Hough Transforms are used as a method of extracting features from an image. It can be used to isolate features of regular curves such as, circles, lines, and ellipses. At it's simplest implementation, Hough Transforms can be used to detect straight lines, like the lines at the side of a road. Computational complexity deters the use of Hough transforms in a lot of situations. However,for finding straight lines, the most simplistic use case, Hough Lines were the chosen method of feature extraction \cite{Hough_Transform}.
+After the Canny Edge detection, Hough Transforms are used as a method of extracting features from an image. It can be used to isolate features of regular curves such as, circles, lines, and ellipses. At it's simplest implementation, Hough Transforms can be used to detect straight lines, like the lines at the side of a road. Computational complexity deters the use of Hough transforms in a lot of situations. However,for finding straight lines, the most simplistic use case, Hough Lines were the chosen method of feature extraction \cite{Hough_Transform}. Simple Hough Transforms are more resilient to noise in the frame \cite{Hough_Lines_Better_Against_Noise}
 
 The specific implementation used chosen was \href{https://docs.opencv.org/3.4/d9/db0/tutorial_hough_lines.html}{\texttt{HoughLines}}, which can be seen in fig \ref{fig:HoughLines}.
 
@@ -308,17 +310,29 @@ Initially a group of variables were created to calculate the lanes from the line
 \label{fig:setup_variables_for_lane_detection}
 \end{figure}
 
+After the initialisation of all the varibales shown in fig \ref{fig:setup_variables_for_lane_detection}, the algorithm runs through various loops. 
+
+The first loop, \texttt{(i<lines.size())}, is used to iterate through all of the lines found by the Hough Lines algorithm to do lane detection on each of the lines. The second loop, \texttt{(g>Frame.rows-300)}, loops through all of the y coordinates of the lines in the images. This loop starts at the top of the page and iterates upwards to the cut off point of the denoted by \texttt{Frame.rows-300}. This was done to exclude any lines, or parts of lines, that were above the road and thus not relevant for the lane detection. The third and final loop, \texttt{(k<q)}, is used to iterate through the lines to be used in calculating the x coordinates of the points. 
+
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{itteration_loops_for_lane_detection}}
 \caption{Loops for lane detection algorithm}
 \label{fig:itteration_loops_for_lane_detection}
 \end{figure}
 
-extracts x by using equation \ref{eq:x_from_y}.
-
-\begin{equation} \label{eq:x_from_y}
+\begin{gather} \label{eq:x_from_y}
 x = \left(\frac{\rho}{sin(\theta)}\right) - (y \cdot tan(\theta))
-\end{equation}
+\shortintertext{where}
+\begin{aligned}
+&x \text{ is x coordinate of the point on the line}\\
+&y \text{ is y coordinate of the point on the line}\\
+&\rho \text{ is the perpendicular distance from the origin}\\
+&\theta \text{ is the angle about the origin (in radians)}\\
+\end{aligned}\notag
+\end{gather}
+
+
+Fig \ref{fig:checking_angles_of_lines_1} shows the process of finding the left hand side lane of the road. It starts by evaluating whether the angle of the line (in radians) to the origin is less than 1. If the angle is less than 1, equation \ref{eq:x_from_y} to calculate the x value of the given point on the line. This equation uses 
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{checking_angles_of_lines_1}}

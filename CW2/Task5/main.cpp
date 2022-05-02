@@ -88,15 +88,15 @@ int main()
         float upperbound = 1.01; // upper limit of difference in detected lines
         float lowerbound = 0.99; // lower limit of difference in detected lines
 
-        // itterate through number of lines found
+        // iterate through number of lines found
         for (int i = 0;i < (int)lines.size(); i++) {
             // output the lines found using the Hough lines algorithm
             // lineRT(Frame, lines[i], Scalar(0,0,255), 2);
 
-            // itterate through the desired y coordinates for lines
+            // iterate through the desired y coordinates for lines
             for(int g = Frame.rows; g > Frame.rows - 300; g--){
 
-                // itterate through the number of lines found for each given y value
+                // iterate through the number of lines found for each given y value
                 for(int k = 0; k < q; k++){
 
                     if(lines[k][1]<=1){ // if the angle of the lines (in radians) is less than 1
