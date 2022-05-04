@@ -49,7 +49,7 @@ Plymouth, Devon\\}}
 
 \begin{abstract}
 
-Machine vision is a mature technology that is becoming more prevalent within modern engineering practises. It is being utilised more in the rapidly evolving fields of autonomy and automation. This report outlines some of the functionalities of a popular C/C++ based computer visions library \href{https://opencv.org}{\textit{OpenCV}}. The Assignment has been split into two tasks; Task 4 and Task 5. The first task, Task 4, is Disparity Mapping using a pair of stereo cameras to be able to judge distances to objects. The second task, Task 5, was Self-driving Car Lane Detection from the dashcam footage taken from a car.
+Machine vision is a mature technology that is becoming more prevalent within modern engineering practises. It is being utilised more in the rapidly evolving fields of autonomy and automation. This report outlines some of the functionalities of a popular C/C++ based computer visions library \href{https://opencv.org}{\textit{OpenCV}}. The Assignment has been split into two tasks; Task 4 and Task 5 (Continued on from Tasks 1, 2, and 3 previously). The first task, Task 4, is Disparity Mapping. Utilising a pair of stereo cameras to be able to judge distances to objects. The second task, Task 5, was Self-driving Car Lane Detection from dashboard camera footage from a car.
 
 \end{abstract}
 
@@ -59,21 +59,21 @@ Computer Vision, OpenCV, Object Detection, C++, Lane Detection
 \section{Task 4: Disparity Mapping}	
 \subsection{Introduction}
 
-The first task was to perform disparity mapping to evaluate the distance of a given object in a frame to allow a robot to navigate it's environment. Disparity Mapping allows the robot to build up a 3D view of it's environment  
+The first task was to perform disparity mapping to evaluate the distance of a given object in a frame allowing a robot to navigate it's environment. Disparity Mapping allows the robot to build up a 3D view of it's environment. 
 
 \subsection{Solution}
 
 The solution to this task was split up into multiple parts. Firstly, using the calibration images to calibrate the cameras. Secondly, using the calibration result to correct the stereo distance targets. Next, Combining the left and right images into a disparity map, with brightness indicating the distance from the camera. Penultimately, labelling the distance targets with their known distance to the camera. Use this to plot disparity against distance and write a formula relating distance to disparity. Finally, using the formula to calculate the distance for each of the unknown targets.
 
-\subsubsection{Camera Calibration and Stereo Image Correction}
+\subsubsection{Camera Calibration and Stereo Image Correction} \label{Camera_Calibration}
 
-Stereo camera needs to be calibrated to one another before they can be used for stereo vision. Corrections need to be made for both physical misalignments (extrinsic error), and lens distortion(intrinsic error) \cite{Stero_Calibration}. This was done using the \href{https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=stereocalibration}{\texttt{SteroCalibration}} program provided by \textit{OpenCV} \cite{Book_Calibration}.
+Stereo cameras need to be calibrated to one another before they can be used for stereo vision. Corrections need to be made for both physical misalignments (extrinsic error), and lens distortion (intrinsic error) \cite{Stero_Calibration}. This was done using the \href{https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=stereocalibration}{\texttt{SteroCalibration}} program provided by \textit{OpenCV} \cite{Book_Calibration}.
 
-The program firstly reads in image pairs (taken from the left and right camera) of a checkerboard pattern target placed in different locations and orientations. This allows the program to create a list of intrinsics and extrinsic parameters to allow for these effects in the program. The checkerboard is of known size so the program can calibrate what it sees against what it is expecting. This known as the Bouquet stereo image calibration \cite{Bouget}.
+The program firstly reads in image pairs (taken from the left and right camera) of a checkerboard pattern target placed in different locations and orientations. This allows the program to create a list of intrinsic and extrinsic parameters to allow for correction to these effects within the program. The checkerboard is of known size so the program can calibrate the cameras to a reference. This known as Bouquet stereo image calibration \cite{Bouget}.
 
 \subsubsection{Disparity Mapping} \label{Disparity_Mapping}
 
-The first stage of disparity mapping was to remap the images to correct for the positional/lens distortion, as mentioned above \cite{OpenCV_Remapping}. The two images were then combined into a 16 bit stereo block matcher \cite{Stereo_Block_Matching}. The code for doing this can be found in Fig \ref{fig:ImageRemapping}.
+The first stage of disparity mapping was to remap the images to correct for the positional/lens distortion, as mentioned in section \ref{Camera_Calibration} \cite{OpenCV_Remapping}. The two images were then combined into a 16 bit stereo block matcher \cite{Stereo_Block_Matching}. The code for doing this can be found in Fig \ref{fig:ImageRemapping}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{ImageRemapping}}
@@ -81,7 +81,7 @@ The first stage of disparity mapping was to remap the images to correct for the 
 \label{fig:ImageRemapping}
 \end{figure}
 
-Once this was done, a 16 bit disparity map of the two images has been created. To measure the disparity, a rectangular region of interest was created, as seen in fig \ref{fig:RectangleOnDisparityMap}. This was created to make sure that only the disparity of the measured object was used. Whilst in the actual test the disparity map used was the 16-bit version, it does not get outputted correctly, so the 8-bit version is used for demonstration purposes.
+Once this is done, a 16 bit disparity map of the two images is created. To measure the disparity, a rectangular region of interest was created, as seen in fig \ref{fig:RectangleOnDisparityMap}. This was created to make sure that only the disparity of the measured object was used. Whilst in the actual test the disparity map used was the 16-bit version, it does not get outputted correctly, so the 8-bit version is used for demonstration purposes. This can be seen in fig \ref{fig:disparity_frame}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{RectangleOnDisparityMap}}
@@ -117,7 +117,7 @@ From the values of measured distance and disparity shown in table \ref{table:dis
 
 The full size graph can be seen in Appendix \ref{appendix:DisparityGraph}.
 
-Fig \ref{fig:DisparityGraph} has been made using the data from table \ref{table:distance_and_disparity_tables}. The value for $Bf$ was calculated by rearranging the disparity equation \ref{eq:Disparity_Equation} to equation \ref{eq:Disparity_Equation_rearranged_1}. To do this, the average of the $Distance \cdot Disparity$ was taken, as shown in equation \ref{eq:AverageDisparity}. 
+Fig \ref{fig:DisparityGraph} has been made using the data from table \ref{table:distance_and_disparity_tables}. The value for $Bf$ was calculated by rearranging the disparity equation \ref{eq:Disparity_Equation} to equation \ref{eq:Disparity_Equation_rearranged_1}. TO use this value for calculating distance an average of $Distance \cdot Disparity$ was taken, as shown in equation \ref{eq:AverageDisparity}. 
 
 \begin{equation} \label{eq:Disparity_Equation}
 Disparity = \frac{B \cdot f}{Distance}
@@ -170,7 +170,11 @@ B \cdot f = Disparity \cdot Distance
 \end{center}
 \end{table}
 
-Once the value of $Bf$ had been found it was used to calculate the the distances for the known targets, as of test of the previous measurements accuracy this can be seen in equation \ref{eq:Disparity_Equation_rearranged_1}. The code for calculating the distance and outputting the result can be seen in fig \ref{fig:DistanceOutputKnownDistances}.
+Once the value of $Bf$ had been found it was used to calculate the distances for the known targets, as of test of the previous measurements accuracy. This can be seen in equation \ref{eq:Disparity_Equation_rearranged_2}. The code for calculating the distance and outputting the result can be seen in fig \ref{fig:DistanceOutputKnownDistances}.
+
+\begin{equation} \label{eq:Disparity_Equation_rearranged_2}
+Distance = \frac{B \cdot f}{Disparity}
+\end{equation}
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{DistanceOutputKnownDistances}}
@@ -178,7 +182,7 @@ Once the value of $Bf$ had been found it was used to calculate the the distances
 \label{fig:DistanceOutputKnownDistances}
 \end{figure}
 
-From the values of measured distance and disparity shown in table \ref{table:distance_values_for_known_values}, and the accuracy of the prediction was also recorded. As the distance value for the testing images was already known and the disparity value had just been calculated, it was easy to test the output of the equation for reliability and accuracy. The graph of error over distance can be seen in fig \ref{fig:PercentageGraph}.
+Along with the values of measured distance and disparity, shown in table \ref{table:distance_values_for_known_values}, the accuracy of the prediction was also recorded. As the distance value for the testing images was already known and the disparity value had just been calculated, it was easy to test the output of the equation for reliability and accuracy. The graph of error over distance can be seen in fig \ref{fig:PercentageGraph}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{PercentageGraph}}
@@ -228,37 +232,37 @@ The full size graph can be seen in Appendix \ref{appendix:PercentageGraph}.
 \end{table}
 
 \subsubsection{Using Disparity Formula to calculate distances for unknown targets} 
-To find the distance for the unknown targets, the disparity value was firstly calculated using the same method as described above. The disparity value, along with the value previously calculated using equation \ref{eq:Disparity_Equation_rearranged_1}, can be used to calculated the distance of the object in the images. 
+To find the distance for the unknown targets, the disparity value was firstly calculated using the same method as described in section \ref{Disparity_Mapping}. The disparity value, along with the value previously calculated using equation \ref{eq:Disparity_Equation_rearranged_1}, can be used to calculated the distance of the object in the images. 
 
-The method for evaluating the distances of the objects in the images was very similar to the function used in,  within the Disparity Mapping section. The main differences between the two codes are, the source of the files and the terminal output of the program. The files used in calculating the distance were images with an unknown distance to the object in the image. The output in the terminal was almost identical but the known distance of the object was not stated - as it was unknown. 
+The method for evaluating the distances of the objects in the images was very similar to the function used in fig \ref{fig:DistanceOutputKnownDistances}, within the Disparity Mapping section. The main differences between the two codes are, the source of the files and the terminal output of the program. The files used in calculating the distance were images with an unknown distance to the object in the image. The output in the terminal was almost identical but the known distance to the object was not stated - as it was unknown. 
 
-It is unclear how close the  the estimates of distance were to the actual values but given the accuracy on the known images (within 5.53\%), it would be safe to assume that these values could be considered accurate within a 6\% margin.
+It is unclear how close the estimates of distance were to the actual values but given the accuracy on the known images (maximum difference of 5.53\%), it would be safe to assume that these values could be considered accurate within a 6\% accuracy margin.
 
 The full flowchart for the code can be seen in Appendix \ref{appendix:task_4_flowchart}.
 
 The full breakdown of the code can be seen in Appendix \ref{appendix:task_4_disparity_code}.
 
-The video showing the known distance targets can be seen \href{}{here}.
+The video showing the known distance targets can be seen \href{https://youtu.be/jV-Ht9x28nk}{here}.
 
-The video showing the unknown distance targets can be seen \href{}{here}.
+The video showing the unknown distance targets can be seen \href{https://youtu.be/g0bPXUbjqvo}{here}.
 
 \subsection{Further Improvements}
 
-Although this method was effective there are still ways in which it could be improved. The two biggest flaws with this method was how the calibration was conducted.
+Although this method was effective there are still ways in which it could be improved. The two biggest flaws with this method were how the calibration was conducted.
 
 The distance measurement was conducted using a a box held aloft over a ruler. Whilst this did provide adequate calibration data for the disparity testing, it could have been conducted in a manor that would have made the measurements increasingly more precise. 
 
 A clearer background would have been beneficial for disparity matching. The utilised background had lots of moving objects that were not consistent between images. This required a region of interest to be used for the disparity mapping. This resulted in a smaller area for the disparity to be measured across. Ideally a plain background would have been used to allow a larger amount of the frame to be mapped. This would increase the area for the disparity mapping thus reducing the effect of outliers within the region of interest. 
 
-These were the two biggest areas of uncertainty in this method and thus would gain the best yield if improved.
+These were the two biggest areas of uncertainty in this method and thus would gain the best yield if improved. 
 
 \subsection{Conclusion}
-Overall this task was hard to judge on the unknown data, as the results were not known and thus hard to tell the accuracy of the finalised results. Despite this, the known measurement disparity mapping was extremely successful, with a maximum error of 5.53\% and an average error of only 2.9\%. Although the methodology could have been improved by making the calibration data collection more precise and using a clearer background, the distances of measurement used (30cm-150cm) would negate the effects of measurement over that distance. 
+Overall this task was hard to judge on the unknown data, as the results were not known. Despite this, the known measurement disparity mapping was extremely successful, with a maximum error of 5.53\% and an average error of only 2.9\%. Although the methodology could have been improved by making the calibration data collection more precise and using a clearer background, the distances of measurement used (30cm-150cm) would negate the effects of measurement over that distance. 
 
 \section{Task 5: Self-driving Car Lane Detection}
 \subsection{Introduction}
 
-The second task was to track the lanes in dashcam footage from the front of a car driving on the road. This is one of the most complex computer vision applications within the field of autonomous cars. Mordern cars have a plethora of cars around their circumference, this allows them to capture large amounts of data whilst on the road. The real difficulty with this is how to break down the information into smaller useful chunks.  
+The second task was to track the lanes in dashcam footage from the front of a car driving on the road. This is one of the most complex computer vision applications within the field of autonomous cars \cite{Hajare2016AVB}. Modern cars have a plethora of sensors around their circumference. This allows them to capture large amounts of data whilst on the road. The real difficulty with this is how to break down the information into smaller useful chunks.  
 
 \subsection{Solution}
 
@@ -272,7 +276,7 @@ The first part of lane detection was to convert the video frames to grey scale, 
 \label{fig:cvtColor}
 \end{figure}
 
-After the frames are converted to grey scale, the frame is then blurred using OpenCV's \href{https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html#ga8c45db9afe636703801b0b2e440fce37}{\texttt{blur}} function -- insert REF -- insert fig of the code. This was done to reduce the noise in the image, this makes the edge detection perform better \cite{Image_Blurring}.
+After the frames are converted to grey scale, the frame is then blurred using OpenCV's \href{https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html#ga8c45db9afe636703801b0b2e440fce37}{\texttt{blur}} function as seen in fig \ref{fig:blur}. This was done to reduce the noise in the image, this makes the edge detection perform better \cite{Image_Blurring}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{blur}}
@@ -280,7 +284,7 @@ After the frames are converted to grey scale, the frame is then blurred using Op
 \label{fig:blur}
 \end{figure} 
 
-Once the  image was blurred, a rectangular mask was placed over the top half of the image using the \href{https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga07d2f74cadcf8e305e810ce8eed13bc9}{\texttt{rectangle}} function - insert REF -- insert fig of the code. This was used to eliminate the top half of the image which would not be useful for finding the road markings. 
+Once the image was blurred, a rectangular mask was placed over the top half of the image using the \href{https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga07d2f74cadcf8e305e810ce8eed13bc9}{\texttt{rectangle}} function - as shown in fig \ref{fig:rectangle}. This was used to eliminate the top half of the image which would not be useful for finding the road markings. 
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{rectangle}}
@@ -288,7 +292,7 @@ Once the  image was blurred, a rectangular mask was placed over the top half of 
 \label{fig:rectangle}
 \end{figure}
  
-Canny Edge detection was then conducted on the masked frame using OpenCV's \href{https://docs.opencv.org/4.x/dd/d1a/group__imgproc__feature.html#ga04723e007ed888ddf11d9ba04e2232de}{\texttt{Canny}} method - insert OPENCV REF here -- insert fig of the code. Canny Edge was chosen because it is deemed to be one of the best edge detection algorithms \cite{Canny2009CannyED}. Canny Edge detection uses non-maximum suppression \cite{non-maximum_supression} and Hysteresis Processes \cite{Hysteresis_Thresholding}. Non-maximum Suppression and Hysteresis Process reduce the number of false edges and thus create a better starting point for further processing such as Hough Transforms. 
+Canny Edge detection was then conducted on the masked frame using OpenCV's \href{https://docs.opencv.org/4.x/dd/d1a/group__imgproc__feature.html#ga04723e007ed888ddf11d9ba04e2232de}{\texttt{Canny}} method as shown in fig \ref{fig:Canny}. Canny Edge detection was chosen because it is deemed to be one of the best edge detection algorithms \cite{Canny2009CannyED}. Canny Edge detection uses non-maximum suppression \cite{non-maximum_supression} and Hysteresis Processes \cite{Hysteresis_Thresholding}. Non-maximum Suppression and Hysteresis Process reduce the number of false edges and thus create a better starting point for further processing, such as Hough Transforms. 
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{Canny}}
@@ -296,7 +300,7 @@ Canny Edge detection was then conducted on the masked frame using OpenCV's \href
 \label{fig:Canny}
 \end{figure}
 
-After the Canny Edge detection, Hough Transforms are used as a method of extracting features from an image. It can be used to isolate features of regular curves such as, circles, lines, and ellipses. At it's simplest implementation, Hough Transforms can be used to detect straight lines, like the lines at the side of a road. Computational complexity deters the use of Hough transforms in a lot of situations. However,for finding straight lines, the most simplistic use case, Hough Lines were the chosen method of feature extraction \cite{Hough_Transform}. Simple Hough Transforms are more resilient to noise in the frame \cite{Hough_Lines_Better_Against_Noise}
+After the Canny Edge detection, Hough Transforms are used as a method of extracting features from an image. It can be used to isolate features of regular curves such as, circles, lines, and ellipses. At it's simplest implementation, Hough Transforms can be used to detect straight lines, like the lines at the side of a road. Computational complexity deters the use of Hough transforms in a lot of situations. However, for finding straight lines, the most simplistic use case, Hough Lines were the chosen method of feature extraction \cite{Hough_Transform}. Simple Hough Transforms are more resilient to noise in the frame \cite{Hough_Lines_Better_Against_Noise}
 
 The specific implementation used chosen was \href{https://docs.opencv.org/3.4/d9/db0/tutorial_hough_lines.html}{\texttt{HoughLines}}, which can be seen in fig \ref{fig:HoughLines}.
 
@@ -306,9 +310,9 @@ The specific implementation used chosen was \href{https://docs.opencv.org/3.4/d9
 \label{fig:HoughLines}
 \end{figure}
 
-Fig \ref{fig:Polar_Coordinates_for_Hough_transforms} show the representation of Hough Lines in polar coordinate form. This is used to show the line as a singular point$(\rho, \theta)$ in the hough space. 
+Fig \ref{fig:Polar_Coordinates_for_Hough_transforms} show the representation of Hough Lines in polar coordinate form. This is used to show the line as a singular point $(\rho, \theta)$ in the hough space. 
 
-The Hough Transform constrcuts an MxN array (where M is the distance from the origin $\rho$, and N is the corresponding angle from the origin $\theta$). These values for $\rho$ and $\theta$ can be used to find the corrinsponding x and y coordinates for each point along the lines. This is how the lines were extracted to draw on the edges of the road. 
+The Hough Transform constructs an MxN array (where M is the distance from the origin $\rho$, and N is the corresponding angle from the origin $\theta$). These values for $\rho$ and $\theta$ can be used to find the corresponding x and y coordinates for each point along the lines. This is method was used to extract the lines to draw on the edges of the road. 
 
 \begin{figure}[H]
 \centering
@@ -356,9 +360,9 @@ x = \left(\frac{\rho}{sin(\theta)}\right) - (y \cdot tan(\theta))
 \end{gather}
 
 
-Fig \ref{fig:checking_angles_of_lines_1} shows the process of finding the left hand side lane of the road. It starts by evaluating whether the angle of the line (in radians) to the origin is less than 1. If the angle is less than 1, equation \ref{eq:x_from_y} to calculate the x value of the given point on the line. This equation uses the output from the Hough Lines to calculate the x-value of a point given it's y-value. 
+Fig \ref{fig:checking_angles_of_lines_1} shows the process of finding the left hand side lane of the road. It starts by evaluating whether the angle of the line (in radians) to the origin is less than 1. If the angle is less than 1, equation \ref{eq:x_from_y} is used to calculate the x value of the given point on the line. This equation uses the output from the Hough Lines to calculate the x-value of a point given it's y-value. 
 
-After this x-value is found, the previous x-value is checked. If the new value is within a defined threshold, the value is added with $90\%$ of the old x-value and $10\%$ of the new x-value. If the latest x-value is not within the defined threshold, the old x-value is used. This is done to reduce the jitter within each frame and to make the road tracking smoother. This is called temporal smoothing \cite{temporal_smoothing}. This technique is commonly used within lane detection algorithms, it assumes that there will be no rapid movement and changing of lanes \cite{deeplane}, things that would be considered to be unsafe driving practises on the road. The code for utilising equation \ref{eq:x_from_y} and the corresponding temporal smoothing can be seen in fig \ref{fig:checking_angles_of_lines_1}.
+After this x-value is found, the previous x-value is checked. If the new value is within a defined threshold, the value is added with $90\%$ of the old x-value and $10\%$ of the new x-value. If the latest x-value is not within the defined threshold, the old x-value is used. This is done to reduce the jitter within each frame and to make the road tracking smoother. This techniques is called temporal smoothing \cite{temporal_smoothing}. This technique is commonly used within lane detection algorithms, it assumes that there will be no rapid movement and changing of lanes \cite{deeplane}, things that would be considered to be unsafe driving practises on the road. The code for utilising equation \ref{eq:x_from_y} and the corresponding temporal smoothing can be seen in fig \ref{fig:checking_angles_of_lines_1}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{checking_angles_of_lines_1}}
@@ -366,7 +370,7 @@ After this x-value is found, the previous x-value is checked. If the new value i
 \label{fig:checking_angles_of_lines_1}
 \end{figure}
 
-Much like in fig \ref{fig:checking_angles_of_lines_1}, fig \ref{fig:checking_angles_of_lines_2.3}  aims to find the corresponding x-values given a y-value input and uses temporal smoothing to reduce the jitter between frames. The main difference between these two methods, other than where in the array the x coordinate is stored, is the angle (in radians) that is being checked. The code in fig \ref{fig:checking_angles_of_lines_1} uses angles of less than 1 radian whereas fig \ref{fig:checking_angles_of_lines_2.3} used angles greater than 2.3 radians. Other than these two differences, the methods work in exactly the same way. 
+Much like in fig \ref{fig:checking_angles_of_lines_1}, fig \ref{fig:checking_angles_of_lines_2.3} aims to find the corresponding x-values given a y-value input and uses temporal smoothing to reduce the jitter between frames. The main difference between these two methods, other than where in the array the x coordinate is stored, is the angle (in radians) that is being checked. The code in fig \ref{fig:checking_angles_of_lines_1} uses angles of less than 1 radian whereas fig \ref{fig:checking_angles_of_lines_2.3} used angles greater than 2.3 radians. Other than these two differences, the methods work in exactly the same way. 
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{checking_angles_of_lines_2_3}}
@@ -374,7 +378,7 @@ Much like in fig \ref{fig:checking_angles_of_lines_1}, fig \ref{fig:checking_ang
 \label{fig:checking_angles_of_lines_2.3}
 \end{figure}
 
-Once the sides of the lane have been calculated, the middle of the lane was calculated. This was calculated simply by taking the average between the two points picked for the lanes. This was done for the top of the lanes and for the bottom point of the lines. This was a crude implementation for finding the middle of the lane. This could have been done by taking the average between every y point along line but given that the Hough Lines algorithm was outputting only straight lines, this would have given the same result, but with a more computationally complex approach. If the Hough Lines Probability method had been used, the methodolgy for finding the centre line would have been different, this is discussed further in the Further Improvements section. 
+Once the sides of the lane have been calculated, the middle of the lane was calculated. This was calculated simply by taking the average between the two points picked for the lanes. This was done for the top of the lanes and for the bottom point of the lines. This was a crude implementation for finding the middle of the lane. This could have been done by taking the average between the x values for every y point along line but given that the Hough Lines algorithm was outputting only straight lines, this would have given the same result, but with a more computationally complex approach. If the Hough Lines Probability method had been used, the methodolgy for finding the centre line would have been different, this is discussed further in the Further Improvements section. 
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{line_in_middle_of_road}}
@@ -382,7 +386,7 @@ Once the sides of the lane have been calculated, the middle of the lane was calc
 \label{fig:line_in_middle_of_road}
 \end{figure}
 
-After calculating the points for the lanes, and the centre line for the lane, The points were added to a vector to make up the four corners of the lane. Once these values have been added, a new overlay frame is created to display the lane. Once this has been done, the vecotr of corner points, are cast into Points for the polygon function along with the number of points being used. The OpenCV function \href{https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga311160e71d37e3b795324d097cb3a7dc}{\texttt{fillPoly}} was used to create the polygon. This took arguments for the output frame, a pointer to the location of the points, a pointer to the number of points being outputted, the number of contours and the colour of the rectangle.
+After calculating the points for the lanes, and the centre line for the lane, The points were added to a vector to make up the four corners of the lane. Once these values have been added, a new overlay frame is created to display the lane. Once this has been done, the vector of corner points, are cast into Points for the polygon function along with the number of points being used. The OpenCV function \href{https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga311160e71d37e3b795324d097cb3a7dc}{\texttt{fillPoly}} was used to create the polygon. This took arguments for the output frame, a pointer to the location of the points, a pointer to the number of points being outputted, the number of contours and the colour of the rectangle.
 
 Once all of the points were calculated, the lane polygon was added on top of the main video frame using the \href{https://docs.opencv.org/4.x/d2/de8/group__core__array.html#gafafb2513349db3bcff51f54ee5592a19}{\texttt{addWeighted}} method. The code for this can be seen in figure \ref{fig:polygon_of_lanes}.
 
@@ -392,7 +396,7 @@ Once all of the points were calculated, the lane polygon was added on top of the
 \label{fig:polygon_of_lanes}
 \end{figure}
 
-Once these two images have been merged together, the 
+Once these two images have been merged together, the lane is highlighted in green with a blue line bisecting it. An example frame can be seen in fig \ref{fig:lane_identification_output}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{lane_identification_output}}
@@ -400,14 +404,18 @@ Once these two images have been merged together, the
 \label{fig:lane_identification_output}
 \end{figure}
 
-The video showing the lane tracking algorithm working can be seen \href{}{here}.
+The full flowchart for the code can be seen in Appendix \ref{appendix:task_5_flowchart}.
 
-\href{https://www.youtube.com/watch?v=OOPWzhFnCZg&t=2s}{test vid}
+The full breakdown of the code can be seen in Appendix \ref{appendix:task_5_lane_code}.
+
+The video showing the lane tracking algorithm working can be seen \href{https://youtu.be/Xw9haUy82Ps}{here}.
+
+The video showing the lane tracking on new footage can be seen \href{https://youtu.be/3RjcQkaabNI}{here}.
 
 
 \subsection{Further Improvements}
 
-One method of improving the lane detection would e to look for certain colours within the frames, and mark these as the road lines. This would be possible by utilising a similar technique used in a previous task (Task 2: Colour Tracker). This could help in eliminating false positives from the results such as a curb on the side of the road that may be close to the markings on the road. The biggest issue with using this method is variation in road marking colours. In the UK there are three standardised colours for road markings, white, yellow, and red \cite{road_markings}. These three colours do not take into account various other factors such as fading of the paint on the road markings and even adverse lighting. This could be overcome by using the HSV colour space looking for specific hues. This could allow just the sides of the road to be picked up and  for the lines caused by the sides of the road to be ignored. 
+One method of improving the lane detection would be to look for certain colours within the frames, and mark these as the road lines. This would be possible by utilising a similar technique used in a previous task (Task 2: Colour Tracker). This could help in eliminating false positives from the results such as a curb on the side of the road that may be close to the markings on the road. The biggest issue with using this method is variation in road marking colours. In the UK there are three standardised colours for road markings, white, yellow, and red \cite{road_markings}. These three colours do not take into account various other factors such as fading of the paint on the road markings and even adverse lighting. This could be overcome by using the HSV colour space looking for specific hues. This could allow just the sides of the road to be picked up and  for the lines caused by the sides of the road to be ignored. 
 
 Another way of improving the lane detection would be to use differing form of Hough Lines, such as Probabilistic Hough Lines (\href{https://docs.opencv.org/4.x/dd/d1a/group__imgproc__feature.html#ga8618180a5948286384e3b7ca02f6feeb}{\texttt{HoughLinesP}}). Probabilistic Hough Lines finds segments in a line. Unlike a standard Hough Transform it is able to find segments of a line and be able to track non-straight lines, but it is more inaccurate than the standard Hough Transform \cite{hough_book}. The advantage of using standard hough lines would be increased resiliency but would require higher computational and storage requirements over the probabilistic hough transform \cite{improvement_to_hough_lines}. 
 
@@ -427,7 +435,7 @@ Fig \ref{fig:new_vid_not_working} and fig \ref{fig:new_vid_working} both show a 
 
 \subsection{Conclusion}
 
-The solution for 5 works fairly well within the confines of the test footage supplied. The road is detected and the detection is fairly stable, if a bit jittery in places. This could have been caused by the issues stated above or by other unforeseen issues. When shown other, un-tested footage, the lane detector struggled to detect and track the lanes for any extended periods of time. Given further development time and methods, it could be possible to make this lane tracking algorithm more generic and to work on a larger set of roads. 
+The solution for task 5 works fairly well within the confines of the test footage supplied. The road is detected and the detection is fairly stable, if a bit jittery in places. This could have been caused by the issues stated above or by other unforeseen issues. When shown other, untested footage, the lane detector struggled to detect and track the lanes for any extended periods of time. Given further development time and methods, it could be possible to make this lane tracking algorithm more generic and to work on a larger set of roads. 
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
@@ -464,9 +472,23 @@ The code can be found on GitHub \href{https://github.com/LukeDWaller99/Aint308}{
 
 \subsection{Flowchart for Task 5} \label{appendix:task_5_flowchart}
 
+\begin{figure}[H]
+\centerline{\includegraphics[width=0.6\textwidth]{task_5_flowchart}}
+\end{figure}
+
 \subsection{Full Lane Detection Code} \label{appendix:task_5_lane_code}
 
-\subsection{}
+\begin{figure}[H]
+\centerline{\includegraphics[width=0.6\textwidth]{task_5_full_code_1}}
+\end{figure}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=0.6\textwidth]{task_5_full_code_2}}
+\end{figure}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=0.6\textwidth]{task_5_full_code_3}}
+\end{figure}
 
 \end{appendix}
 

@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     DataFile.open(DataFilename);
     while (1){
 
-        int useKnownImages = 1;
+        int useKnownImages = 0;
 
         if(useKnownImages == 1){
 
