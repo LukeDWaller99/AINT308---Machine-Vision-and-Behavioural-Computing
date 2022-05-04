@@ -137,9 +137,9 @@ int main(int argc, char** argv)
 
             while(waitKey(10)!='x')
             {
-                imshow("left", Left);
-                imshow("right", Right);
-                imshow("disparity", disp8bit);
+                imshow("left - 10618407", Left);
+                imshow("right - 10618407", Right);
+                imshow("disparity - 10618407", disp8bit);
             }
 
             ImageDistance += 10;
@@ -159,8 +159,11 @@ int main(int argc, char** argv)
 
             //Match left and right images to create disparity image
             Mat disp16bit, disp8bit;
-            sgbm->compute(Left_Unknown, Right_Unknown, disp16bit);                               // compute 16-bit greyscalse image with the stereo block matcher
-            disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.)); // Convert disparity map to an 8-bit greyscale image so it can be displayed (Only for imshow, do not use for disparity calculations)
+            // compute 16-bit greyscalse image with the stereo block matcher
+            sgbm->compute(Left_Unknown, Right_Unknown, disp16bit);
+            // Convert disparity map to an 8-bit greyscale image so it can be displayed
+            // (Only for imshow, do not use for disparity calculations)
+            disp16bit.convertTo(disp8bit, CV_8U, 255/(numberOfDisparities*16.));
 
             // ==================================Your code goes here===============================
 
@@ -174,9 +177,12 @@ int main(int argc, char** argv)
             Rect rect(x, y, rectangleWidth, rectangleHeight);
             rectangle(disp8bit, rect, Scalar(255, 0, 0));
 
-            for (int i = x; i < x + rectangleWidth; i++) { // runs through all the rows in the image
-                for (int j = y; j < y + rectangleHeight; j++) { // runs through all the columns in the image
-                    int PixelValue = (int)disp16bit.at<ushort>(j,i); // stores the RBG values in the PixelValue vector
+            // runs through all the rows in the image
+            for (int i = x; i < x + rectangleWidth; i++) {
+                // runs through all the columns in the image
+                for (int j = y; j < y + rectangleHeight; j++) {
+                    // stores the RBG values in the PixelValue vector
+                    int PixelValue = (int)disp16bit.at<ushort>(j,i);
                     if (PixelValue < 65000){
                         OutputValue += PixelValue;
                     }
@@ -194,9 +200,9 @@ int main(int argc, char** argv)
 
             while(waitKey(10)!='x')
             {
-                imshow("left", Left_Unknown);
-                imshow("right", Right_Unknown);
-                imshow("disparity", disp8bit);
+                imshow("left - 10618407", Left_Unknown);
+                imshow("right - 10618407", Right_Unknown);
+                imshow("disparity - 10618407", disp8bit);
             }
             ImageNum++;
             if(ImageNum>7)

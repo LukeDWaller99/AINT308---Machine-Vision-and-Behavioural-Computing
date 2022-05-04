@@ -27,6 +27,7 @@ int main()
 
     //Open video file
     VideoCapture CarVideo("../Task5/DashCam.mp4");
+//    VideoCapture CarVideo("../Task5/Media2.mp4");
     if(!CarVideo.isOpened()){
         cout<<"Error opening video"<<endl;
         return -1;
@@ -169,9 +170,9 @@ int main()
             Mat overlayFrame;
             double alpha = 0.2;
             Frame.copyTo(overlayFrame);
-            const Point *pts = (const cv::Point*) Mat(cornersOfLane).data;
-            int npts = Mat(cornersOfLane).rows;
-            fillPoly(overlayFrame, &pts, &npts, 1, Scalar(0, 255, 0));
+            const Point *cornerPoints = (const cv::Point*) Mat(cornersOfLane).data;
+            int noOfPoints = Mat(cornersOfLane).rows;
+            fillPoly(overlayFrame, &cornerPoints, &noOfPoints, 1, Scalar(0, 255, 0));
             addWeighted(overlayFrame, alpha, Frame, 1 - alpha, 0, Frame);
         }
 

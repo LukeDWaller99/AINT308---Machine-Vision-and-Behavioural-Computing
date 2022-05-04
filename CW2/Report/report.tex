@@ -85,11 +85,17 @@ Once this was done, a 16 bit disparity map of the two images has been created. T
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{RectangleOnDisparityMap}}
-\caption{Rectangle Drawn On Disparity Map to Indicate Search Area}
+\caption{Code for Rectangle Drawn On Disparity Map to Indicate Search Area}
 \label{fig:RectangleOnDisparityMap}
 \end{figure}
 
-Fig \ref{Disparity_Mapping} is the main code to check the disparity for this task. The code is searching through all of the pixels in a given area (as constructed in fig \ref{fig:RectangleOnDisparityMap}). If the disparity value is larger than a certain value, it is added to the list. 
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{disparity_frame}}
+\caption{Disparity Frame with Rectangle drawn on for Region of Interest}
+\label{fig:disparity_frame}
+\end{figure}
+
+Fig \ref{fig:DisparityMappingCode} is the main code to check the disparity for this task. The code is searching through all of the pixels in a given area (as constructed in fig \ref{fig:RectangleOnDisparityMap}). If the disparity value is larger than a certain value, it is added to the list. 
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{DisparityMappingCode}}
@@ -108,6 +114,8 @@ From the values of measured distance and disparity shown in table \ref{table:dis
 \caption{Graph of Disparity over Distance }
 \label{fig:DisparityGraph}
 \end{figure} 
+
+The full size graph can be seen in Appendix \ref{appendix:DisparityGraph}.
 
 Fig \ref{fig:DisparityGraph} has been made using the data from table \ref{table:distance_and_disparity_tables}. The value for $Bf$ was calculated by rearranging the disparity equation \ref{eq:Disparity_Equation} to equation \ref{eq:Disparity_Equation_rearranged_1}. To do this, the average of the $Distance \cdot Disparity$ was taken, as shown in equation \ref{eq:AverageDisparity}. 
 
@@ -170,7 +178,15 @@ Once the value of $Bf$ had been found it was used to calculate the the distances
 \label{fig:DistanceOutputKnownDistances}
 \end{figure}
 
-From the values of measured distance and disparity shown in table \ref{table:distance_values_for_known_values}, and the accuracy of the prediction was also recorded. As the distance value for the testing images was already known and the disparity value had just been calculated, it was easy to test the output of the equation for reliability and accuracy.
+From the values of measured distance and disparity shown in table \ref{table:distance_values_for_known_values}, and the accuracy of the prediction was also recorded. As the distance value for the testing images was already known and the disparity value had just been calculated, it was easy to test the output of the equation for reliability and accuracy. The graph of error over distance can be seen in fig \ref{fig:PercentageGraph}.
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{PercentageGraph}}
+\caption{Graph of Error over Distance}
+\label{fig:PercentageGraph}
+\end{figure}
+
+The full size graph can be seen in Appendix \ref{appendix:PercentageGraph}.
 
 \begin{table}
 \begin{center}
@@ -217,6 +233,14 @@ To find the distance for the unknown targets, the disparity value was firstly ca
 The method for evaluating the distances of the objects in the images was very similar to the function used in,  within the Disparity Mapping section. The main differences between the two codes are, the source of the files and the terminal output of the program. The files used in calculating the distance were images with an unknown distance to the object in the image. The output in the terminal was almost identical but the known distance of the object was not stated - as it was unknown. 
 
 It is unclear how close the  the estimates of distance were to the actual values but given the accuracy on the known images (within 5.53\%), it would be safe to assume that these values could be considered accurate within a 6\% margin.
+
+The full flowchart for the code can be seen in Appendix \ref{appendix:task_4_flowchart}.
+
+The full breakdown of the code can be seen in Appendix \ref{appendix:task_4_disparity_code}.
+
+The video showing the known distance targets can be seen \href{}{here}.
+
+The video showing the unknown distance targets can be seen \href{}{here}.
 
 \subsection{Further Improvements}
 
@@ -332,7 +356,9 @@ x = \left(\frac{\rho}{sin(\theta)}\right) - (y \cdot tan(\theta))
 \end{gather}
 
 
-Fig \ref{fig:checking_angles_of_lines_1} shows the process of finding the left hand side lane of the road. It starts by evaluating whether the angle of the line (in radians) to the origin is less than 1. If the angle is less than 1, equation \ref{eq:x_from_y} to calculate the x value of the given point on the line. This equation uses 
+Fig \ref{fig:checking_angles_of_lines_1} shows the process of finding the left hand side lane of the road. It starts by evaluating whether the angle of the line (in radians) to the origin is less than 1. If the angle is less than 1, equation \ref{eq:x_from_y} to calculate the x value of the given point on the line. This equation uses the output from the Hough Lines to calculate the x-value of a point given it's y-value. 
+
+After this x-value is found, the previous x-value is checked. If the new value is within a defined threshold, the value is added with $90\%$ of the old x-value and $10\%$ of the new x-value. If the latest x-value is not within the defined threshold, the old x-value is used. This is done to reduce the jitter within each frame and to make the road tracking smoother. This is called temporal smoothing \cite{temporal_smoothing}. This technique is commonly used within lane detection algorithms, it assumes that there will be no rapid movement and changing of lanes \cite{deeplane}, things that would be considered to be unsafe driving practises on the road. The code for utilising equation \ref{eq:x_from_y} and the corresponding temporal smoothing can be seen in fig \ref{fig:checking_angles_of_lines_1}.
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{checking_angles_of_lines_1}}
@@ -340,11 +366,15 @@ Fig \ref{fig:checking_angles_of_lines_1} shows the process of finding the left h
 \label{fig:checking_angles_of_lines_1}
 \end{figure}
 
+Much like in fig \ref{fig:checking_angles_of_lines_1}, fig \ref{fig:checking_angles_of_lines_2.3}  aims to find the corresponding x-values given a y-value input and uses temporal smoothing to reduce the jitter between frames. The main difference between these two methods, other than where in the array the x coordinate is stored, is the angle (in radians) that is being checked. The code in fig \ref{fig:checking_angles_of_lines_1} uses angles of less than 1 radian whereas fig \ref{fig:checking_angles_of_lines_2.3} used angles greater than 2.3 radians. Other than these two differences, the methods work in exactly the same way. 
+
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{checking_angles_of_lines_2_3}}
 \caption{checking angles of lines 2.3}
 \label{fig:checking_angles_of_lines_2.3}
 \end{figure}
+
+Once the sides of the lane have been calculated, the middle of the lane was calculated. This was calculated simply by taking the average between the two points picked for the lanes. This was done for the top of the lanes and for the bottom point of the lines. This was a crude implementation for finding the middle of the lane. This could have been done by taking the average between every y point along line but given that the Hough Lines algorithm was outputting only straight lines, this would have given the same result, but with a more computationally complex approach. If the Hough Lines Probability method had been used, the methodolgy for finding the centre line would have been different, this is discussed further in the Further Improvements section. 
 
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{line_in_middle_of_road}}
@@ -352,15 +382,52 @@ Fig \ref{fig:checking_angles_of_lines_1} shows the process of finding the left h
 \label{fig:line_in_middle_of_road}
 \end{figure}
 
+After calculating the points for the lanes, and the centre line for the lane, The points were added to a vector to make up the four corners of the lane. Once these values have been added, a new overlay frame is created to display the lane. Once this has been done, the vecotr of corner points, are cast into Points for the polygon function along with the number of points being used. The OpenCV function \href{https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga311160e71d37e3b795324d097cb3a7dc}{\texttt{fillPoly}} was used to create the polygon. This took arguments for the output frame, a pointer to the location of the points, a pointer to the number of points being outputted, the number of contours and the colour of the rectangle.
+
+Once all of the points were calculated, the lane polygon was added on top of the main video frame using the \href{https://docs.opencv.org/4.x/d2/de8/group__core__array.html#gafafb2513349db3bcff51f54ee5592a19}{\texttt{addWeighted}} method. The code for this can be seen in figure \ref{fig:polygon_of_lanes}.
+
 \begin{figure}[H]
 \centerline{\includegraphics[width=.4\textwidth]{polygon_of_lanes}}
 \caption{Polygon of Lanes}
 \label{fig:polygon_of_lanes}
 \end{figure}
 
+Once these two images have been merged together, the 
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{lane_identification_output}}
+\caption{Lane Identification Output}
+\label{fig:lane_identification_output}
+\end{figure}
+
+The video showing the lane tracking algorithm working can be seen \href{}{here}.
+
+\href{https://www.youtube.com/watch?v=OOPWzhFnCZg&t=2s}{test vid}
+
+
 \subsection{Further Improvements}
 
+One method of improving the lane detection would e to look for certain colours within the frames, and mark these as the road lines. This would be possible by utilising a similar technique used in a previous task (Task 2: Colour Tracker). This could help in eliminating false positives from the results such as a curb on the side of the road that may be close to the markings on the road. The biggest issue with using this method is variation in road marking colours. In the UK there are three standardised colours for road markings, white, yellow, and red \cite{road_markings}. These three colours do not take into account various other factors such as fading of the paint on the road markings and even adverse lighting. This could be overcome by using the HSV colour space looking for specific hues. This could allow just the sides of the road to be picked up and  for the lines caused by the sides of the road to be ignored. 
+
+Another way of improving the lane detection would be to use differing form of Hough Lines, such as Probabilistic Hough Lines (\href{https://docs.opencv.org/4.x/dd/d1a/group__imgproc__feature.html#ga8618180a5948286384e3b7ca02f6feeb}{\texttt{HoughLinesP}}). Probabilistic Hough Lines finds segments in a line. Unlike a standard Hough Transform it is able to find segments of a line and be able to track non-straight lines, but it is more inaccurate than the standard Hough Transform \cite{hough_book}. The advantage of using standard hough lines would be increased resiliency but would require higher computational and storage requirements over the probabilistic hough transform \cite{improvement_to_hough_lines}. 
+
+Fig \ref{fig:new_vid_not_working} and fig \ref{fig:new_vid_working} both show a new clip being tested. It can be seen that fig \ref{fig:new_vid_not_working} cannot detect the lane correctly, whereas the lane has been detected in fig \ref{fig:new_vid_working}. This could be caused by a large number of reasons. The centre line on the road has a different colour for the lane. Using the techniques previously discussed this video could have had the same results as with the previous test image. 
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{new_vid_not_working}}
+\caption{Secondary Test Clip: Lane not detected}
+\label{fig:new_vid_not_working}
+\end{figure}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=.4\textwidth]{new_vid_working}}
+\caption{Secondary Test Clip: Lane detected}
+\label{fig:new_vid_working}
+\end{figure}
+
 \subsection{Conclusion}
+
+The solution for 5 works fairly well within the confines of the test footage supplied. The road is detected and the detection is fairly stable, if a bit jittery in places. This could have been caused by the issues stated above or by other unforeseen issues. When shown other, un-tested footage, the lane detector struggled to detect and track the lanes for any extended periods of time. Given further development time and methods, it could be possible to make this lane tracking algorithm more generic and to work on a larger set of roads. 
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
@@ -370,6 +437,36 @@ The code can be found on GitHub \href{https://github.com/LukeDWaller99/Aint308}{
 \onecolumn
 
 \begin{appendix}
+ 
+\subsection{Flowchart for Task 4} \label{appendix:task_4_flowchart}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=0.6\textwidth]{task_4_flowchart}}
+\end{figure}
+
+\subsection{Full Disparity Matching Code} \label{appendix:task_4_disparity_code}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=0.6\textwidth]{task_4_full_code}}
+\end{figure}
+
+\subsection{Full Size Graph of Disparity over Distance} \label{appendix:DisparityGraph}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=1.2 \textwidth, angle = 90]{DisparityGraph}}
+\end{figure}
+
+\subsection{Full Size Graph of Error over Distance} \label{appendix:PercentageGraph}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=1.2 \textwidth, angle = 90]{PercentageGraph}}
+\end{figure}
+
+\subsection{Flowchart for Task 5} \label{appendix:task_5_flowchart}
+
+\subsection{Full Lane Detection Code} \label{appendix:task_5_lane_code}
+
+\subsection{}
 
 \end{appendix}
 
