@@ -69,7 +69,6 @@ The solution to this task was split up into multiple parts. Firstly, using the c
 
 Stereo cameras need to be calibrated to one another before they can be used for stereo vision. Corrections need to be made for both physical misalignments (extrinsic error), and lens distortion (intrinsic error) \cite{Stero_Calibration}. This was done using the \href{https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=stereocalibration}{\texttt{SteroCalibration}} program provided by \textit{OpenCV} \cite{Book_Calibration}.
 
-The program firstly reads in image pairs, taken from the left and right cameras, of a checkerboard pattern target placed in different locations and orientations. This allows the program to create a list of intrinsic and extrinsic parameters to allow for correction of these effects within the program. The checkerboard is of known size so the program can calibrate the cameras to a reference. This known as Bouquet stereo image calibration \cite{Bouget}.
 
 \subsubsection{Disparity Mapping} \label{Disparity_Mapping}
 
@@ -117,7 +116,7 @@ Using the measured distance and disparity values, shown in Table \ref{table:dist
 
 The full size graph can be seen in Appendix \ref{appendix:DisparityGraph}.
 
-Fig \ref{fig:DisparityGraph} has been made using the data from Table \ref{table:distance_and_disparity_tables}. The value for $Bf$ was calculated by rearranging the disparity equation \ref{eq:Disparity_Equation} to equation \ref{eq:Disparity_Equation_rearranged_1}. To use this value for calculating distance an average of $Distance \cdot Disparity$ was taken, as shown in equation \ref{eq:AverageDisparity}. 
+Fig \ref{fig:DisparityGraph} has been made using the data from Table \ref{table:distance_and_disparity_tables}. The value for $Bf$ was calculated by rearranging the disparity equation \ref{eq:Disparity_Equation} to get equation \ref{eq:Disparity_Equation_rearranged_1}. To use this value for calculating distance an average of $Distance \cdot Disparity$ was taken, as shown in equation \ref{eq:AverageDisparity}. 
 
 \begin{equation} \label{eq:Disparity_Equation}
 Disparity = \frac{B \cdot f}{Distance}
@@ -250,7 +249,7 @@ The video showing the unknown distance targets can be seen \href{https://youtu.b
 
 Although this method was effective, there are still ways in which it could be improved. The two biggest flaws with this method were with how the calibration was conducted.
 
-The distance measurement was conducted using a a box held aloft over a ruler. Whilst this did provide adequate calibration data for the disparity testing, it could have been conducted in a manner that would have made the measurements increasingly more precise. 
+The distance measurement was conducted using a a box held over a ruler. Whilst this did provide adequate calibration data for the disparity testing, it could have been conducted in a manner that would have made the measurements more precise. 
 
 A clearer background would have been beneficial for disparity matching. The utilised background had lots of moving objects that were not consistent between images. This required a region of interest to be used for the disparity mapping. This resulted in a smaller area for the disparity to be measured across. Ideally a plain background would have been used to allow a larger amount of the frame to be mapped. This would increase the area for the disparity mapping thus reducing the effect of outliers within the region of interest. 
 
