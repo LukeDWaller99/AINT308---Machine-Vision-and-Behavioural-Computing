@@ -69,6 +69,7 @@ The solution to this task was split up into multiple parts. Firstly, using the c
 
 Stereo cameras need to be calibrated to one another before they can be used for stereo vision. Corrections need to be made for both physical misalignments (extrinsic error), and lens distortion (intrinsic error) \cite{Stero_Calibration}. This was done using the \href{https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=stereocalibration}{\texttt{SteroCalibration}} program provided by \textit{OpenCV} \cite{Book_Calibration}.
 
+The program firstly reads in image pairs, taken from the left and right cameras, of a chequerboard  pattern target placed in different locations and orientations. This allows the program to create a list of intrinsic and extrinsic parameters. This allows for correction of these effects within the program. The chequerboard is of known size so the program can calibrate the cameras to a reference. This known as Bouquet stereo image calibration \cite{Bouget}.
 
 \subsubsection{Disparity Mapping} \label{Disparity_Mapping}
 
